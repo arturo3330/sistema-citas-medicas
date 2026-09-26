@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Mis citas
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>
+        Mis Citas Médicas
+    </h1>
+
+</header>
+
+
+<div class="menu">
+
+    <a href="dashboard.html">
+        Inicio
+    </a>
+
+    <a href="reservar-cita.html">
+        Reservar cita
+    </a>
+
+    <a href="mis-citas.html">
+        Mis citas
+    </a>
+
+    <a href="cambiar-clave.html">
+        Cambiar contraseña
+    </a>
+
+    <a
+            href="#"
+            onclick="cerrarSesion()">
+
+        Cerrar sesión
+
+    </a>
+
+</div>
+
+
+<div class="contenido">
+
+    <h2>
+        Mis citas registradas
+    </h2>
+
+
+    <table>
+
+        <thead>
+
+        <tr>
+
+            <th>ID</th>
+
+            <th>Médico</th>
+
+            <th>Especialidad</th>
+
+            <th>Fecha</th>
+
+            <th>Hora</th>
+
+            <th>Estado</th>
+
+        </tr>
+
+        </thead>
+
+
+        <tbody id="tablaCitas">
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<script src="js/sesion.js"></script>
+
+<script src="js/mis-citas.js"></script>
+
+
+</body>
+
+</html>

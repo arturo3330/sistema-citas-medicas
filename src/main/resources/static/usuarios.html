@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Gestión de Usuarios</h1>
+</header>
+
+<div class="menu">
+
+    <a href="dashboard.html">Inicio</a>
+
+    <a href="especialidades.html">Especialidades</a>
+
+    <a href="medicos.html">Médicos</a>
+
+    <a href="pacientes.html">Pacientes</a>
+
+    <a href="horarios.html">Horarios</a>
+
+    <a href="citas.html">Citas</a>
+
+    <a href="usuarios.html">Usuarios</a>
+
+    <a href="cambiar-clave.html">
+        Cambiar contraseña
+    </a>
+
+    <a href="#" onclick="cerrarSesion()">
+        Cerrar sesión
+    </a>
+
+</div>
+
+
+<div class="contenido">
+
+    <h2>Registrar / Editar usuario</h2>
+
+    <input
+            type="hidden"
+            id="idUsuario">
+
+    <label>Username</label>
+
+    <input
+            type="text"
+            id="username">
+
+
+    <label>Contraseña</label>
+
+    <input
+            type="password"
+            id="password">
+
+
+    <label>Nombre</label>
+
+    <input
+            type="text"
+            id="nombre">
+
+
+    <label>Rol</label>
+
+    <select id="rol"
+            onchange="cambiarRol()">
+
+        <option value="ADMIN">
+            ADMIN
+        </option>
+
+        <option value="PACIENTE">
+            PACIENTE
+        </option>
+
+    </select>
+
+
+    <div id="contenedorPaciente">
+
+        <label>Paciente asociado</label>
+
+        <select id="paciente">
+        </select>
+
+    </div>
+
+
+    <label>Estado</label>
+
+    <select id="estado">
+
+        <option value="true">
+            Activo
+        </option>
+
+        <option value="false">
+            Inactivo
+        </option>
+
+    </select>
+
+
+    <button onclick="guardar()">
+        Guardar
+    </button>
+
+    <button onclick="limpiar()">
+        Nuevo
+    </button>
+
+    <hr>
+
+
+    <h2>Usuarios registrados</h2>
+
+    <table>
+
+        <thead>
+
+        <tr>
+
+            <th>ID</th>
+            <th>Username</th>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Paciente</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+
+        </tr>
+
+        </thead>
+
+
+        <tbody id="tablaUsuarios">
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<script src="js/sesion.js"></script>
+
+<script>
+    protegerAdmin();
+</script>
+
+<script src="js/usuarios.js"></script>
+
+</body>
+</html>

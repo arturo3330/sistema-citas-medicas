@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Reservar cita
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>
+        Reservar Cita Médica
+    </h1>
+
+</header>
+
+
+<div class="menu">
+
+    <a href="dashboard.html">
+        Inicio
+    </a>
+
+    <a href="reservar-cita.html">
+        Reservar cita
+    </a>
+
+    <a href="mis-citas.html">
+        Mis citas
+    </a>
+
+    <a href="cambiar-clave.html">
+        Cambiar contraseña
+    </a>
+
+    <a
+            href="#"
+            onclick="cerrarSesion()">
+
+        Cerrar sesión
+
+    </a>
+
+</div>
+
+
+<div class="contenido">
+
+    <h2>
+        Nueva cita
+    </h2>
+
+
+    <p>
+        Paciente:
+        <strong id="nombrePaciente">
+        </strong>
+    </p>
+
+
+    <label>
+        Horario disponible
+    </label>
+
+    <select id="horario">
+    </select>
+
+
+    <button onclick="reservar()">
+
+        Reservar cita
+
+    </button>
+
+
+    <p id="mensaje">
+    </p>
+
+</div>
+
+
+<script src="js/sesion.js"></script>
+
+<script src="js/reservar-cita.js"></script>
+
+
+</body>
+
+</html>

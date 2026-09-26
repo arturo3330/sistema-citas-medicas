@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Citas Médicas</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+<div class="contenedor-login">
+
+    <h1>Sistema de Citas Médicas</h1>
+
+    <div class="card">
+
+        <h2>Iniciar sesión</h2>
+
+        <form id="formLogin">
+
+            <label>Usuario</label>
+
+            <input
+                    type="text"
+                    id="username"
+                    placeholder="Ingrese su usuario"
+                    autocomplete="username">
+
+            <label>Contraseña</label>
+
+            <input
+                    type="password"
+                    id="password"
+                    placeholder="Ingrese su contraseña"
+                    autocomplete="current-password">
+
+            <button type="submit">
+                Ingresar
+            </button>
+
+        </form>
+
+        <p id="mensaje"></p>
+
+    </div>
+
+</div>
+
+<script src="js/login.js"></script>
+
+<script>
+
+    const usuarioExistente =
+        localStorage.getItem("usuario");
+
+    if (usuarioExistente) {
+
+        window.location.href =
+            "dashboard.html";
+    }
+
+</script>
+
+</body>
+
+</html>

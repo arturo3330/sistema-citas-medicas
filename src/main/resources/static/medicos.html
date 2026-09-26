@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Médicos</title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>
+        Mantenimiento de Médicos
+    </h1>
+
+</header>
+
+
+<div class="menu">
+
+    <a href="dashboard.html">
+        Inicio
+    </a>
+
+    <a href="especialidades.html">
+        Especialidades
+    </a>
+
+    <a href="medicos.html">
+        Médicos
+    </a>
+
+    <a href="pacientes.html">
+        Pacientes
+    </a>
+
+    <a href="horarios.html">
+        Horarios
+    </a>
+
+    <a href="citas.html">
+        Citas
+    </a>
+
+    <a href="cambiar-clave.html">
+        Cambiar contraseña
+    </a>
+
+    <a
+            href="#"
+            onclick="cerrarSesion()">
+
+        Cerrar sesión
+
+    </a>
+
+</div>
+
+
+<div class="contenido">
+
+    <h2>
+        Registrar médico
+    </h2>
+
+
+    <input
+            type="hidden"
+            id="idMedico">
+
+
+    <label>
+        Nombre
+    </label>
+
+    <input
+            type="text"
+            id="nombre">
+
+
+    <label>
+        CMP
+    </label>
+
+    <input
+            type="text"
+            id="cmp">
+
+
+    <label>
+        Especialidad
+    </label>
+
+    <select id="especialidad">
+    </select>
+
+
+    <label>
+        Estado
+    </label>
+
+    <select id="estado">
+
+        <option value="true">
+            Activo
+        </option>
+
+        <option value="false">
+            Inactivo
+        </option>
+
+    </select>
+
+
+    <button onclick="guardar()">
+
+        Guardar
+
+    </button>
+
+
+    <hr>
+
+
+    <h2>
+        Médicos registrados
+    </h2>
+
+
+    <table>
+
+        <thead>
+
+        <tr>
+
+            <th>ID</th>
+
+            <th>Nombre</th>
+
+            <th>CMP</th>
+
+            <th>Especialidad</th>
+
+            <th>Estado</th>
+
+            <th>Acciones</th>
+
+        </tr>
+
+        </thead>
+
+
+        <tbody id="tablaMedicos">
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<script src="js/sesion.js"></script>
+<script>
+    protegerAdmin();
+</script>
+<script src="js/medicos.js"></script>
+
+
+</body>
+
+</html>

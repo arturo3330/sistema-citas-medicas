@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Citas Médicas
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>
+        Registro de Citas Médicas
+    </h1>
+
+</header>
+
+
+<div class="menu">
+
+    <a href="dashboard.html">
+        Inicio
+    </a>
+
+    <a href="especialidades.html">
+        Especialidades
+    </a>
+
+    <a href="medicos.html">
+        Médicos
+    </a>
+
+    <a href="pacientes.html">
+        Pacientes
+    </a>
+
+    <a href="horarios.html">
+        Horarios
+    </a>
+
+    <a href="citas.html">
+        Citas
+    </a>
+
+    <a href="cambiar-clave.html">
+        Cambiar contraseña
+    </a>
+
+    <a
+            href="#"
+            onclick="cerrarSesion()">
+
+        Cerrar sesión
+
+    </a>
+
+</div>
+
+
+<div class="contenido">
+
+    <h2>
+        Nueva cita
+    </h2>
+
+
+    <label>
+        Paciente
+    </label>
+
+    <select id="paciente">
+    </select>
+
+
+    <label>
+        Horario disponible
+    </label>
+
+    <select id="horario">
+    </select>
+
+
+    <button onclick="reservar()">
+
+        Reservar cita
+
+    </button>
+
+
+    <p id="mensaje">
+    </p>
+
+
+    <hr>
+
+
+    <h2>
+        Citas registradas
+    </h2>
+
+
+    <table>
+
+        <thead>
+
+        <tr>
+
+            <th>ID</th>
+
+            <th>Paciente</th>
+
+            <th>Médico</th>
+
+            <th>Especialidad</th>
+
+            <th>Fecha</th>
+
+            <th>Hora</th>
+
+            <th>Estado</th>
+
+        </tr>
+
+        </thead>
+
+
+        <tbody id="tablaCitas">
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<script src="js/sesion.js"></script>
+<script>
+    protegerAdmin();
+</script>
+<script src="js/citas.js"></script>
+
+
+</body>
+
+</html>

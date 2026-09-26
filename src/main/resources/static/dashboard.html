@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Panel Principal
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+<body>
+
+
+<header>
+
+    <h1>
+        Sistema de Citas Médicas
+    </h1>
+
+</header>
+
+
+<div class="menu">
+
+    <a href="dashboard.html">
+        Inicio
+    </a>
+
+
+    <span id="menuAdmin"
+          style="display:none;">
+
+        <a href="especialidades.html">
+            Especialidades
+        </a>
+
+        <a href="medicos.html">
+            Médicos
+        </a>
+
+        <a href="pacientes.html">
+            Pacientes
+        </a>
+
+        <a href="horarios.html">
+            Horarios
+        </a>
+
+        <a href="citas.html">
+            Citas
+        </a>
+
+        <a href="usuarios.html">
+            Usuarios
+        </a>
+
+    </span>
+
+
+    <span id="menuPaciente"
+          style="display:none;">
+
+        <a href="reservar-cita.html">
+            Reservar cita
+        </a>
+
+        <a href="mis-citas.html">
+            Mis citas
+        </a>
+
+    </span>
+
+
+    <a href="cambiar-clave.html">
+        Cambiar contraseña
+    </a>
+
+
+    <a
+            href="#"
+            onclick="cerrarSesion()">
+
+        Cerrar sesión
+
+    </a>
+
+</div>
+
+
+<div class="contenido">
+
+    <h2>
+        Panel principal
+    </h2>
+
+
+    <p>
+        Bienvenido,
+        <strong id="nombreUsuario">
+        </strong>
+    </p>
+
+
+    <p>
+        Usuario:
+        <strong id="usernameUsuario">
+        </strong>
+    </p>
+
+
+    <p>
+        Rol:
+        <strong id="rolUsuario">
+        </strong>
+    </p>
+
+</div>
+
+
+<script src="js/sesion.js"></script>
+
+
+<script>
+
+    const usuario =
+        obtenerUsuarioSesion();
+
+
+    document.getElementById(
+        "nombreUsuario"
+    ).innerText =
+        usuario.nombre;
+
+
+    document.getElementById(
+        "usernameUsuario"
+    ).innerText =
+        usuario.username;
+
+
+    document.getElementById(
+        "rolUsuario"
+    ).innerText =
+        usuario.rol;
+
+
+    if (esAdmin()) {
+
+        document.getElementById(
+            "menuAdmin"
+        ).style.display =
+            "inline";
+
+    }
+
+
+    if (esPaciente()) {
+
+        document.getElementById(
+            "menuPaciente"
+        ).style.display =
+            "inline";
+
+    }
+
+</script>
+
+
+</body>
+
+</html>

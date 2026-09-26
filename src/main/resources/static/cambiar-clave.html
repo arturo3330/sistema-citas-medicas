@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Cambiar contraseña
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>
+        Cambiar contraseña
+    </h1>
+
+</header>
+
+
+<div class="menu">
+
+    <a href="dashboard.html">
+        Inicio
+    </a>
+
+    <a href="especialidades.html">
+        Especialidades
+    </a>
+
+    <a href="medicos.html">
+        Médicos
+    </a>
+
+    <a href="pacientes.html">
+        Pacientes
+    </a>
+
+    <a href="horarios.html">
+        Horarios
+    </a>
+
+    <a href="citas.html">
+        Citas
+    </a>
+
+    <a
+            href="#"
+            onclick="cerrarSesion()">
+
+        Cerrar sesión
+
+    </a>
+
+</div>
+
+
+<div class="contenido">
+
+    <h2>
+        Actualizar contraseña
+    </h2>
+
+
+    <div class="card">
+
+        <p>
+            Usuario:
+            <strong id="usuarioActual"></strong>
+        </p>
+
+
+        <label>
+            Contraseña actual
+        </label>
+
+        <input
+                type="password"
+                id="claveActual">
+
+
+        <label>
+            Nueva contraseña
+        </label>
+
+        <input
+                type="password"
+                id="claveNueva">
+
+
+        <label>
+            Confirmar nueva contraseña
+        </label>
+
+        <input
+                type="password"
+                id="confirmarClave">
+
+
+        <button onclick="cambiarClave()">
+
+            Cambiar contraseña
+
+        </button>
+
+
+        <p id="mensaje"></p>
+
+    </div>
+
+</div>
+
+
+<script src="js/sesion.js"></script>
+
+<script src="js/cambiar-clave.js"></script>
+
+
+</body>
+
+</html>
