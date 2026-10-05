@@ -2,161 +2,336 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <title>Gestión de Usuarios</title>
-    <link rel="stylesheet" href="css/estilos.css">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Usuarios | Makanitos
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
 </head>
 
 <body>
 
-<header>
-    <h1>Gestión de Usuarios</h1>
-</header>
 
-<div class="menu">
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
 
-    <a href="dashboard.html">Inicio</a>
-
-    <a href="especialidades.html">Especialidades</a>
-
-    <a href="medicos.html">Médicos</a>
-
-    <a href="pacientes.html">Pacientes</a>
-
-    <a href="horarios.html">Horarios</a>
-
-    <a href="citas.html">Citas</a>
-
-    <a href="usuarios.html">Usuarios</a>
-
-    <a href="cambiar-clave.html">
-        Cambiar contraseña
-    </a>
-
-    <a href="#" onclick="cerrarSesion()">
-        Cerrar sesión
-    </a>
-
+<div id="appNavbar">
 </div>
 
 
-<div class="contenido">
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
 
-    <h2>Registrar / Editar usuario</h2>
-
-    <input
-            type="hidden"
-            id="idUsuario">
-
-    <label>Username</label>
-
-    <input
-            type="text"
-            id="username">
+<main class="contenido">
 
 
-    <label>Contraseña</label>
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
 
-    <input
-            type="password"
-            id="password">
+    <div class="pagina-encabezado">
 
+        <div>
 
-    <label>Nombre</label>
+            <h2>
+                Usuarios
+            </h2>
 
-    <input
-            type="text"
-            id="nombre">
+            <p>
+                Administra las cuentas de acceso
+                de pacientes y personal de Makanitos.
+            </p>
 
-
-    <label>Rol</label>
-
-    <select id="rol"
-            onchange="cambiarRol()">
-
-        <option value="ADMIN">
-            ADMIN
-        </option>
-
-        <option value="PACIENTE">
-            PACIENTE
-        </option>
-
-    </select>
-
-
-    <div id="contenedorPaciente">
-
-        <label>Paciente asociado</label>
-
-        <select id="paciente">
-        </select>
+        </div>
 
     </div>
 
 
-    <label>Estado</label>
+    <!-- ======================================
+         FORMULARIO
+         ====================================== -->
 
-    <select id="estado">
+    <section class="formulario-seccion">
 
-        <option value="true">
-            Activo
-        </option>
-
-        <option value="false">
-            Inactivo
-        </option>
-
-    </select>
+        <h3>
+            Registrar / Editar usuario
+        </h3>
 
 
-    <button onclick="guardar()">
-        Guardar
-    </button>
-
-    <button onclick="limpiar()">
-        Nuevo
-    </button>
-
-    <hr>
+        <input
+                type="hidden"
+                id="idUsuario">
 
 
-    <h2>Usuarios registrados</h2>
-
-    <table>
-
-        <thead>
-
-        <tr>
-
-            <th>ID</th>
-            <th>Username</th>
-            <th>Nombre</th>
-            <th>Rol</th>
-            <th>Paciente</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-
-        </tr>
-
-        </thead>
+        <div class="form-grid">
 
 
-        <tbody id="tablaUsuarios">
-        </tbody>
+            <!-- USERNAME -->
 
-    </table>
+            <div class="form-grupo">
 
-</div>
+                <label for="username">
+                    Username
+                </label>
 
+                <input
+                        type="text"
+                        id="username"
+                        autocomplete="off"
+                        placeholder="Ej. paciente01">
+
+            </div>
+
+
+            <!-- CONTRASEÑA -->
+
+            <div class="form-grupo">
+
+                <label for="password">
+                    Contraseña
+                </label>
+
+                <input
+                        type="password"
+                        id="password"
+                        autocomplete="new-password"
+                        placeholder="Ingrese una contraseña">
+
+                <small class="texto-ayuda">
+                    Al editar, deja la contraseña
+                    vacía si no deseas cambiarla.
+                </small>
+
+            </div>
+
+
+            <!-- NOMBRE -->
+
+            <div class="form-grupo">
+
+                <label for="nombre">
+                    Nombre
+                </label>
+
+                <input
+                        type="text"
+                        id="nombre"
+                        placeholder="Ej. Ana Torres">
+
+            </div>
+
+
+            <!-- ROL -->
+
+            <div class="form-grupo">
+
+                <label for="rol">
+                    Rol
+                </label>
+
+                <select
+                        id="rol"
+                        onchange="cambiarRol()">
+
+                    <option value="PACIENTE">
+                        Paciente
+                    </option>
+
+                    <option value="SECRETARIA">
+                        Secretaría
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- PACIENTE ASOCIADO -->
+
+            <div
+                    id="contenedorPaciente"
+                    class="form-grupo">
+
+                <label for="paciente">
+                    Paciente asociado
+                </label>
+
+                <select id="paciente">
+
+                    <option value="">
+                        Seleccione paciente
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ESTADO -->
+
+            <div class="form-grupo">
+
+                <label for="estado">
+                    Estado
+                </label>
+
+                <select id="estado">
+
+                    <option value="true">
+                        Activo
+                    </option>
+
+                    <option value="false">
+                        Inactivo
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================
+             ACCIONES
+             ================================== -->
+
+        <div class="form-acciones">
+
+            <button
+                    type="button"
+                    onclick="guardar()">
+
+                Guardar
+
+            </button>
+
+
+            <button
+                    type="button"
+                    class="btn-secundario"
+                    onclick="limpiar()">
+
+                Nuevo
+
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ======================================
+         LISTADO
+         ====================================== -->
+
+    <section class="tabla-seccion">
+
+        <div class="tabla-encabezado">
+
+            <div>
+
+                <h3>
+                    Usuarios registrados
+                </h3>
+
+                <p>
+                    Lista de cuentas registradas
+                    y sus permisos dentro del sistema.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Username
+                    </th>
+
+                    <th>
+                        Nombre
+                    </th>
+
+                    <th>
+                        Rol
+                    </th>
+
+                    <th>
+                        Paciente
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                    <th>
+                        Acciones
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="tablaUsuarios">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
 
 <script src="js/sesion.js"></script>
 
+
 <script>
-    protegerAdmin();
+
+    protegerPersonalClinica();
+
 </script>
+
+
+<script src="js/navbar.js"></script>
 
 <script src="js/usuarios.js"></script>
 
+
 </body>
+
 </html>

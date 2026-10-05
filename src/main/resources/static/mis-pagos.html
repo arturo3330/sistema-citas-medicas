@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Mis pagos | Makanitos
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
+
+<div id="appNavbar">
+</div>
+
+
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
+
+<main class="contenido">
+
+
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
+
+    <div class="pagina-encabezado">
+
+        <div>
+
+            <h2>
+                Mis pagos
+            </h2>
+
+            <p>
+                Consulta el estado de tus pagos,
+                saldos pendientes y citas asociadas.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         PACIENTE
+         ====================================== -->
+
+    <section class="reserva-paciente">
+
+        <div class="reserva-paciente-icono">
+            👤
+        </div>
+
+        <div>
+
+            <span>
+                Paciente
+            </span>
+
+            <strong id="nombrePaciente">
+                -
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         LISTADO DE PAGOS
+         ====================================== -->
+
+    <section class="tabla-seccion">
+
+        <div class="tabla-encabezado">
+
+            <div>
+
+                <h3>
+                    Estado de mis pagos
+                </h3>
+
+                <p>
+                    Revisa el costo total de tus citas,
+                    los pagos realizados y el saldo pendiente.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Cita
+                    </th>
+
+                    <th>
+                        Especialidad
+                    </th>
+
+                    <th>
+                        Médico
+                    </th>
+
+                    <th>
+                        Fecha
+                    </th>
+
+                    <th>
+                        Total
+                    </th>
+
+                    <th>
+                        Pagado
+                    </th>
+
+                    <th>
+                        Saldo
+                    </th>
+
+                    <th>
+                        Estado cita
+                    </th>
+
+                    <th>
+                        Estado pago
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="tablaMisPagos">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
+
+<script src="js/sesion.js"></script>
+
+
+<script>
+
+    protegerPaciente();
+
+</script>
+
+
+<script src="js/navbar.js"></script>
+
+<script src="js/mis-pagos.js"></script>
+
+
+</body>
+
+</html>

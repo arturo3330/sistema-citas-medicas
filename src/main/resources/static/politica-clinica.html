@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Políticas de la clínica | Makanitos
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
+
+<div id="appNavbar">
+</div>
+
+
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
+
+<main class="contenido">
+
+
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
+
+    <div class="pagina-encabezado">
+
+        <div>
+
+            <h2>
+                Políticas de la clínica
+            </h2>
+
+            <p>
+                Consulta las condiciones generales
+                de atención de Makanitos.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         VISTA DE POLÍTICA
+         ====================================== -->
+
+    <section class="politica-vista">
+
+        <div class="politica-vista-encabezado">
+
+            <div class="politica-icono">
+                📄
+            </div>
+
+            <div>
+
+                <h3>
+                    Política general de atención
+                </h3>
+
+                <p>
+                    Condiciones vigentes para citas,
+                    horarios, pagos y cancelaciones.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+                id="vistaPolitica"
+                class="politica-grid">
+
+
+            <div class="politica-item">
+
+                <span class="politica-label">
+                    Nombre
+                </span>
+
+                <strong id="vistaNombre">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="politica-item">
+
+                <span class="politica-label">
+                    Anticipación de las citas
+                </span>
+
+                <strong>
+                    <span id="vistaDias">
+                        -
+                    </span>
+                    días
+                </strong>
+
+            </div>
+
+
+            <div class="politica-item">
+
+                <span class="politica-label">
+                    Horario de mañana
+                </span>
+
+                <strong id="vistaManana">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="politica-item">
+
+                <span class="politica-label">
+                    Horario de tarde
+                </span>
+
+                <strong id="vistaTarde">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="politica-item">
+
+                <span class="politica-label">
+                    Pago mínimo para separar cita
+                </span>
+
+                <strong>
+                    <span id="vistaPorcentaje">
+                        -
+                    </span>%
+                </strong>
+
+            </div>
+
+
+            <div class="politica-item">
+
+                <span class="politica-label">
+                    Cancelación
+                </span>
+
+                <strong>
+                    Mínimo
+                    <span id="vistaCancelacion">
+                        -
+                    </span>
+                    horas antes
+                </strong>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         FORMULARIO SOLO ADMIN
+         ====================================== -->
+
+    <section
+            id="formularioAdmin"
+            class="formulario-seccion politica-admin"
+            style="display:none;">
+
+
+        <div class="politica-admin-encabezado">
+
+            <div>
+
+                <h3>
+                    Configurar política
+                </h3>
+
+                <p>
+                    Modifica las condiciones generales
+                    de funcionamiento de la clínica.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <input
+                type="hidden"
+                id="idPolitica">
+
+
+        <div class="form-grid">
+
+
+            <!-- NOMBRE -->
+
+            <div class="form-grupo form-columna-completa">
+
+                <label for="nombre">
+                    Nombre
+                </label>
+
+                <input
+                        type="text"
+                        id="nombre"
+                        placeholder="Ej. Política general">
+
+            </div>
+
+
+            <!-- DÍAS -->
+
+            <div class="form-grupo">
+
+                <label for="diasAnticipacion">
+                    Días de anticipación
+                </label>
+
+                <input
+                        type="number"
+                        id="diasAnticipacion"
+                        min="1"
+                        max="30">
+
+            </div>
+
+
+            <!-- PORCENTAJE -->
+
+            <div class="form-grupo">
+
+                <label for="porcentajePagoMinimo">
+                    Porcentaje mínimo de pago
+                </label>
+
+                <input
+                        type="number"
+                        id="porcentajePagoMinimo"
+                        min="0"
+                        max="100"
+                        step="0.01">
+
+            </div>
+
+
+            <!-- MAÑANA INICIO -->
+
+            <div class="form-grupo">
+
+                <label for="horaInicioManana">
+                    Inicio turno mañana
+                </label>
+
+                <input
+                        type="time"
+                        id="horaInicioManana">
+
+            </div>
+
+
+            <!-- MAÑANA FIN -->
+
+            <div class="form-grupo">
+
+                <label for="horaFinManana">
+                    Fin turno mañana
+                </label>
+
+                <input
+                        type="time"
+                        id="horaFinManana">
+
+            </div>
+
+
+            <!-- TARDE INICIO -->
+
+            <div class="form-grupo">
+
+                <label for="horaInicioTarde">
+                    Inicio turno tarde
+                </label>
+
+                <input
+                        type="time"
+                        id="horaInicioTarde">
+
+            </div>
+
+
+            <!-- TARDE FIN -->
+
+            <div class="form-grupo">
+
+                <label for="horaFinTarde">
+                    Fin turno tarde
+                </label>
+
+                <input
+                        type="time"
+                        id="horaFinTarde">
+
+            </div>
+
+
+            <!-- CANCELACIÓN -->
+
+            <div class="form-grupo">
+
+                <label for="horasLimiteCancelacion">
+                    Horas límite para cancelar
+                </label>
+
+                <input
+                        type="number"
+                        id="horasLimiteCancelacion"
+                        min="0">
+
+            </div>
+
+
+        </div>
+
+
+        <div class="form-acciones">
+
+            <button
+                    type="button"
+                    onclick="guardarPolitica()">
+
+                Guardar cambios
+
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
+
+<script src="js/sesion.js"></script>
+
+<script src="js/navbar.js"></script>
+
+<script src="js/politica-clinica.js"></script>
+
+
+</body>
+
+</html>

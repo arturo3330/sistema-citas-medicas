@@ -13,115 +13,304 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioService(
-            UsuarioRepository usuarioRepository) {
+    private final ActividadService actividadService;
 
-        this.usuarioRepository = usuarioRepository;
+
+    public UsuarioService(
+            UsuarioRepository usuarioRepository,
+            ActividadService actividadService) {
+
+        this.usuarioRepository =
+                usuarioRepository;
+
+        this.actividadService =
+                actividadService;
     }
 
+
+    // ==========================================
+    // LISTAR
+    // ==========================================
+
     public List<Usuario> listar() {
+
         return usuarioRepository.findAll();
     }
 
-    public Optional<Usuario> buscarPorId(Long id) {
-        return usuarioRepository.findById(id);
+
+    // ==========================================
+    // BUSCAR POR ID
+    // ==========================================
+
+    public Optional<Usuario> buscarPorId(
+            Long id) {
+
+        return usuarioRepository.findById(
+                id
+        );
     }
 
-    public Usuario guardar(Usuario usuario) {
 
-        validarRol(usuario.getRol());
+    // ==========================================
+    // GUARDAR
+    // ==========================================
 
-        usuario.setRol(
-                usuario.getRol().toUpperCase()
+    public Usuario guardar(
+            Usuario usuario) {
+
+        validarRol(
+                usuario.getRol()
         );
 
-        return usuarioRepository.save(usuario);
+
+        usuario.setRol(
+                usuario
+                        .getRol()
+                        .toUpperCase()
+        );
+
+
+        Usuario guardado =
+                usuarioRepository.save(
+                        usuario
+                );
+
+
+        // ======================================
+        // REGISTRAR ACTIVIDAD
+        // ======================================
+
+        actividadService.registrar(
+                "USUARIO",
+                "Nuevo usuario registrado: "
+                        + guardado.getUsername(),
+                null,
+                null
+        );
+
+
+        return guardado;
     }
+
+
+    // ==========================================
+    // ACTUALIZAR
+    // ==========================================
 
     public Usuario actualizar(
             Long id,
             Usuario datos) {
 
-        Usuario actual = usuarioRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Usuario no encontrado"
+        Usuario actual =
+                usuarioRepository
+                        .findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Usuario no encontrado"
+                                )
+                        );
+
+
+        validarRol(
+                datos.getRol()
+        );
+
+
+        // ======================================
+        // EL ADMIN NO PUEDE PERDER SU ROL
+        // ======================================
+
+        if (
+                "ADMIN".equalsIgnoreCase(
+                        actual.getRol()
+                )
+                        &&
+                        !"ADMIN".equalsIgnoreCase(
+                                datos.getRol()
                         )
-                );
-
-        validarRol(datos.getRol());
-
-        // El administrador no puede perder su rol
-        if ("ADMIN".equalsIgnoreCase(actual.getRol())
-                && !"ADMIN".equalsIgnoreCase(datos.getRol())) {
+        ) {
 
             throw new RuntimeException(
                     "No se puede cambiar el rol del administrador"
             );
         }
 
-        actual.setUsername(datos.getUsername());
-        actual.setNombre(datos.getNombre());
-        actual.setRol(
-                datos.getRol().toUpperCase()
+
+        // ======================================
+        // ACTUALIZAR DATOS
+        // ======================================
+
+        actual.setUsername(
+                datos.getUsername()
         );
-        actual.setEstado(datos.getEstado());
-        actual.setPaciente(datos.getPaciente());
 
-        // Solo actualiza la contraseña si viene una nueva
-        if (datos.getPassword() != null
-                && !datos.getPassword().isBlank()) {
 
-            actual.setPassword(datos.getPassword());
+        actual.setNombre(
+                datos.getNombre()
+        );
+
+
+        actual.setRol(
+                datos
+                        .getRol()
+                        .toUpperCase()
+        );
+
+
+        actual.setEstado(
+                datos.getEstado()
+        );
+
+
+        actual.setPaciente(
+                datos.getPaciente()
+        );
+
+
+        // ======================================
+        // CONTRASEÑA
+        // ======================================
+
+        /*
+         * La contraseña solo se modifica
+         * si se envía una nueva.
+         */
+        if (
+                datos.getPassword() != null
+                        &&
+                        !datos
+                                .getPassword()
+                                .isBlank()
+        ) {
+
+            actual.setPassword(
+                    datos.getPassword()
+            );
         }
 
-        return usuarioRepository.save(actual);
-    }
 
-    public void eliminar(Long id) {
-
-        Usuario usuario = usuarioRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Usuario no encontrado"
-                        )
+        Usuario actualizado =
+                usuarioRepository.save(
+                        actual
                 );
 
-        // Ningún ADMIN puede ser eliminado
-        if ("ADMIN".equalsIgnoreCase(usuario.getRol())) {
+
+        // ======================================
+        // REGISTRAR ACTIVIDAD
+        // ======================================
+
+        actividadService.registrar(
+                "USUARIO",
+                "Usuario actualizado: "
+                        + actualizado.getUsername(),
+                null,
+                null
+        );
+
+
+        return actualizado;
+    }
+
+
+    // ==========================================
+    // ELIMINAR
+    // ==========================================
+
+    public void eliminar(
+            Long id) {
+
+        Usuario usuario =
+                usuarioRepository
+                        .findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Usuario no encontrado"
+                                )
+                        );
+
+
+        // ======================================
+        // NINGÚN ADMIN PUEDE ELIMINARSE
+        // ======================================
+
+        if (
+                "ADMIN".equalsIgnoreCase(
+                        usuario.getRol()
+                )
+        ) {
 
             throw new RuntimeException(
                     "El usuario administrador no puede ser eliminado"
             );
         }
 
-        usuarioRepository.delete(usuario);
+
+        String username =
+                usuario.getUsername();
+
+
+        usuarioRepository.delete(
+                usuario
+        );
+
+
+        // ======================================
+        // REGISTRAR ACTIVIDAD
+        // ======================================
+
+        actividadService.registrar(
+                "USUARIO",
+                "Usuario eliminado: "
+                        + username,
+                null,
+                null
+        );
     }
+
+
+    // ==========================================
+    // LOGIN
+    // ==========================================
 
     public Optional<Usuario> login(
             String username,
             String password) {
 
         Optional<Usuario> usuario =
-                usuarioRepository.findByUsername(username);
+                usuarioRepository
+                        .findByUsername(
+                                username
+                        );
+
 
         if (
                 usuario.isPresent()
-                        && usuario.get()
-                        .getPassword()
-                        .equals(password)
-                        && Boolean.TRUE.equals(
-                        usuario.get().getEstado()
-                )
+                        &&
+                        usuario
+                                .get()
+                                .getPassword()
+                                .equals(
+                                        password
+                                )
+                        &&
+                        Boolean.TRUE.equals(
+                                usuario
+                                        .get()
+                                        .getEstado()
+                        )
         ) {
 
             return usuario;
         }
 
+
         return Optional.empty();
     }
+
+
+    // ==========================================
+    // CAMBIAR CONTRASEÑA
+    // ==========================================
 
     public Usuario cambiarClave(
             String username,
@@ -130,51 +319,130 @@ public class UsuarioService {
 
         Usuario usuario =
                 usuarioRepository
-                        .findByUsername(username)
+                        .findByUsername(
+                                username
+                        )
                         .orElseThrow(() ->
                                 new RuntimeException(
                                         "Usuario no encontrado"
                                 )
                         );
 
-        if (!usuario
-                .getPassword()
-                .equals(claveActual)) {
+
+        // ======================================
+        // VALIDAR CONTRASEÑA ACTUAL
+        // ======================================
+
+        if (
+                !usuario
+                        .getPassword()
+                        .equals(
+                                claveActual
+                        )
+        ) {
 
             throw new RuntimeException(
                     "La contraseña actual es incorrecta"
             );
         }
 
-        if (claveNueva == null
-                || claveNueva.isBlank()) {
+
+        // ======================================
+        // VALIDAR CONTRASEÑA NUEVA
+        // ======================================
+
+        if (
+                claveNueva == null
+                        ||
+                        claveNueva.isBlank()
+        ) {
 
             throw new RuntimeException(
                     "La nueva contraseña no puede estar vacía"
             );
         }
 
-        usuario.setPassword(claveNueva);
 
-        return usuarioRepository.save(usuario);
+        // ======================================
+        // EVITAR USAR LA MISMA CONTRASEÑA
+        // ======================================
+
+        if (
+                claveActual.equals(
+                        claveNueva
+                )
+        ) {
+
+            throw new RuntimeException(
+                    "La nueva contraseña debe ser diferente a la actual"
+            );
+        }
+
+
+        usuario.setPassword(
+                claveNueva
+        );
+
+
+        Usuario actualizado =
+                usuarioRepository.save(
+                        usuario
+                );
+
+
+        // ======================================
+        // REGISTRAR ACTIVIDAD
+        // ======================================
+
+        actividadService.registrar(
+                "USUARIO",
+                "Contraseña actualizada para el usuario "
+                        + actualizado.getUsername(),
+                null,
+                null
+        );
+
+
+        return actualizado;
     }
 
-    private void validarRol(String rol) {
 
-        if (rol == null
-                || rol.isBlank()) {
+    // ==========================================
+    // VALIDAR ROL
+    // ==========================================
+
+    private void validarRol(
+            String rol) {
+
+        if (
+                rol == null
+                        ||
+                        rol.isBlank()
+        ) {
 
             throw new RuntimeException(
                     "El rol es obligatorio"
             );
         }
 
+
         String rolNormalizado =
                 rol.toUpperCase();
 
-        if (!rolNormalizado.equals("ADMIN")
-                && !rolNormalizado.equals("SECRETARIA")
-                && !rolNormalizado.equals("PACIENTE")) {
+
+        if (
+                !rolNormalizado.equals(
+                        "ADMIN"
+                )
+                        &&
+                        !rolNormalizado.equals(
+                                "SECRETARIA"
+                        )
+                        &&
+                        !rolNormalizado.equals(
+                                "PACIENTE"
+                        )
+        ) {
 
             throw new RuntimeException(
                     "Rol de usuario no válido"

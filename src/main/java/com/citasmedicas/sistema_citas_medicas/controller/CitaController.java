@@ -16,13 +16,19 @@ public class CitaController {
 
     private final CitaService citaService;
 
+
     public CitaController(
-            CitaService citaService) {
+            CitaService citaService
+    ) {
 
         this.citaService =
                 citaService;
     }
 
+
+    // ==========================================
+    // LISTAR TODAS LAS CITAS
+    // ==========================================
 
     @GetMapping
     public List<Cita> listar() {
@@ -31,14 +37,23 @@ public class CitaController {
     }
 
 
+    // ==========================================
+    // BUSCAR CITA POR ID
+    // ==========================================
+
     @GetMapping("/{id}")
     public ResponseEntity<?> buscar(
-            @PathVariable Long id) {
+            @PathVariable Long id
+    ) {
 
         return citaService
-                .buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(
+                .buscarPorId(
+                        id
+                )
+                .<ResponseEntity<?>>map(
+                        ResponseEntity::ok
+                )
+                .orElseGet(() ->
                         ResponseEntity
                                 .notFound()
                                 .build()
@@ -46,9 +61,14 @@ public class CitaController {
     }
 
 
+    // ==========================================
+    // LISTAR CITAS DE UN PACIENTE
+    // ==========================================
+
     @GetMapping("/paciente/{idPaciente}")
     public List<Cita> listarPorPaciente(
-            @PathVariable Long idPaciente) {
+            @PathVariable Long idPaciente
+    ) {
 
         return citaService
                 .listarPorPaciente(
@@ -57,21 +77,161 @@ public class CitaController {
     }
 
 
+    // ==========================================
+    // RESERVAR CITA + PAGO INICIAL
+    // ==========================================
+
     @PostMapping("/reservar")
     public ResponseEntity<?> reservar(
-            @RequestBody CitaRequest request) {
+            @RequestBody CitaRequest request
+    ) {
 
         try {
 
+            // ======================================
+            // VALIDAR REQUEST
+            // ======================================
+
+            if (request == null) {
+
+                return ResponseEntity
+                        .badRequest()
+                        .body(
+                                "Los datos de la reserva son obligatorios"
+                        );
+            }
+
+
+            if (
+                    request.getIdHorario() == null
+            ) {
+
+                return ResponseEntity
+                        .badRequest()
+                        .body(
+                                "Debe seleccionar un horario"
+                        );
+            }
+
+
+            if (
+                    request.getIdPaciente() == null
+            ) {
+
+                return ResponseEntity
+                        .badRequest()
+                        .body(
+                                "No se encontró el paciente"
+                        );
+            }
+
+
+            // ======================================
+            // VALIDAR DATOS DEL PAGO
+            // ======================================
+
+            if (
+                    request.getMonto() == null
+            ) {
+
+                return ResponseEntity
+                        .badRequest()
+                        .body(
+                                "Debe ingresar el monto del pago"
+                        );
+            }
+
+
+            if (
+                    request.getMetodoPago() == null
+                            ||
+                            request
+                                    .getMetodoPago()
+                                    .isBlank()
+            ) {
+
+                return ResponseEntity
+                        .badRequest()
+                        .body(
+                                "Debe seleccionar un método de pago"
+                        );
+            }
+
+
+            if (
+                    request.getNumeroOperacion() == null
+                            ||
+                            request
+                                    .getNumeroOperacion()
+                                    .isBlank()
+            ) {
+
+                return ResponseEntity
+                        .badRequest()
+                        .body(
+                                "Debe ingresar el número de operación"
+                        );
+            }
+
+
+            // ======================================
+            // RESERVAR + REGISTRAR PAGO
+            // ======================================
+
             Cita cita =
-                    citaService.reservarCita(
+                    citaService.reservar(
                             request.getIdHorario(),
-                            request.getIdPaciente()
+                            request.getIdPaciente(),
+                            request.getMonto(),
+                            request.getMetodoPago(),
+                            request.getNumeroOperacion()
                     );
+
+
+            // ======================================
+            // RESPUESTA CORRECTA
+            // ======================================
 
             return ResponseEntity.ok(
                     cita
             );
+
+
+        } catch (RuntimeException e) {
+
+            // ======================================
+            // ERROR DE VALIDACIÓN / CONCURRENCIA
+            // ======================================
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            e.getMessage()
+                    );
+        }
+    }
+
+
+    // ==========================================
+    // ELIMINAR / CANCELAR CITA
+    // ==========================================
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminar(
+            @PathVariable Long id
+    ) {
+
+        try {
+
+            citaService.eliminar(
+                    id
+            );
+
+
+            return ResponseEntity.ok(
+                    "Cita eliminada correctamente"
+            );
+
 
         } catch (RuntimeException e) {
 

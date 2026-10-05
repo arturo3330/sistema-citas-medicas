@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Pagos | Makanitos
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
+
+<div id="appNavbar">
+</div>
+
+
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
+
+<main class="contenido">
+
+
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
+
+    <div class="pagina-encabezado">
+
+        <div>
+
+            <h2>
+                Pagos
+            </h2>
+
+            <p>
+                Registra pagos y consulta los recibos
+                asociados a las citas médicas.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         POLÍTICA DE PAGO
+         ====================================== -->
+
+    <section class="pago-politica">
+
+        <div class="pago-politica-icono">
+            %
+        </div>
+
+        <div>
+
+            <strong>
+                Pago mínimo establecido por la clínica
+            </strong>
+
+            <p>
+                Para separar una cita se requiere un
+                pago inicial mínimo de
+
+                <span class="pago-politica-porcentaje">
+
+                    <span id="porcentajePolitica">
+                        -
+                    </span>%
+
+                </span>
+
+                del costo total.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         FORMULARIO DE PAGO
+         ====================================== -->
+
+    <section class="formulario-seccion">
+
+        <h3>
+            Registrar pago
+        </h3>
+
+
+        <div class="form-grid">
+
+
+            <!-- ==================================
+                 CITA
+                 ================================== -->
+
+            <div class="form-grupo form-columna-completa">
+
+                <label for="cita">
+                    Cita
+                </label>
+
+                <select
+                        id="cita"
+                        onchange="cambiarCita()">
+
+                    <option value="">
+                        Seleccione una cita
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================
+             DETALLE DE LA CITA
+             ================================== -->
+
+        <div
+                id="detalleCita"
+                class="detalle-pago"
+                style="display:none;">
+
+
+            <div class="detalle-pago-titulo">
+
+                <div class="detalle-pago-icono">
+                    📋
+                </div>
+
+                <div>
+
+                    <strong>
+                        Detalle de la cita
+                    </strong>
+
+                    <p>
+                        Información asociada al pago.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="detalle-pago-grid">
+
+
+                <!-- PACIENTE -->
+
+                <div class="detalle-pago-item">
+
+                    <span>
+                        Paciente
+                    </span>
+
+                    <strong id="detallePaciente">
+                    </strong>
+
+                </div>
+
+
+                <!-- ESPECIALIDAD -->
+
+                <div class="detalle-pago-item">
+
+                    <span>
+                        Especialidad
+                    </span>
+
+                    <strong id="detalleEspecialidad">
+                    </strong>
+
+                </div>
+
+
+                <!-- MÉDICO -->
+
+                <div class="detalle-pago-item">
+
+                    <span>
+                        Médico
+                    </span>
+
+                    <strong id="detalleMedico">
+                    </strong>
+
+                </div>
+
+
+                <!-- FECHA -->
+
+                <div class="detalle-pago-item">
+
+                    <span>
+                        Fecha
+                    </span>
+
+                    <strong id="detalleFecha">
+                    </strong>
+
+                </div>
+
+
+                <!-- TOTAL -->
+
+                <div class="detalle-pago-item">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong>
+                        S/
+                        <span id="detalleTotal">
+                        </span>
+                    </strong>
+
+                </div>
+
+
+                <!-- PAGADO -->
+
+                <div class="detalle-pago-item">
+
+                    <span>
+                        Pagado
+                    </span>
+
+                    <strong>
+                        S/
+                        <span id="detallePagado">
+                        </span>
+                    </strong>
+
+                </div>
+
+
+                <!-- SALDO -->
+
+                <div class="detalle-pago-item">
+
+                    <span>
+                        Saldo
+                    </span>
+
+                    <strong>
+                        S/
+                        <span id="detalleSaldo">
+                        </span>
+                    </strong>
+
+                </div>
+
+
+                <!-- PAGO MÍNIMO -->
+
+                <div class="detalle-pago-item">
+
+                    <span>
+                        Pago mínimo inicial
+                    </span>
+
+                    <strong>
+                        S/
+                        <span id="detalleMinimo">
+                        </span>
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             DATOS DEL PAGO
+             ================================== -->
+
+        <div class="form-grid pago-form-grid">
+
+
+            <!-- ==================================
+                 MONTO
+                 ================================== -->
+
+            <div class="form-grupo">
+
+                <label for="monto">
+                    Monto a pagar
+                </label>
+
+                <input
+                        type="number"
+                        id="monto"
+                        min="0.01"
+                        max="999999.99"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="0.00">
+
+                <small class="texto-ayuda">
+                    Máximo permitido:
+                    S/ 999999.99
+                </small>
+
+            </div>
+
+
+            <!-- ==================================
+                 MÉTODO DE PAGO
+                 ================================== -->
+
+            <div class="form-grupo">
+
+                <label for="metodoPago">
+                    Método de pago
+                </label>
+
+                <select id="metodoPago">
+
+                    <option value="">
+                        Seleccione
+                    </option>
+
+                    <option value="EFECTIVO">
+                        Efectivo
+                    </option>
+
+                    <option value="YAPE">
+                        Yape
+                    </option>
+
+                    <option value="PLIN">
+                        Plin
+                    </option>
+
+                    <option value="TRANSFERENCIA">
+                        Transferencia
+                    </option>
+
+                    <option value="TARJETA">
+                        Tarjeta
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ==================================
+                 NÚMERO DE OPERACIÓN
+                 ================================== -->
+
+            <div class="form-grupo form-columna-completa">
+
+                <label for="numeroOperacion">
+                    Número de operación
+                </label>
+
+                <input
+                        type="text"
+                        id="numeroOperacion"
+                        maxlength="3"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        oninput="
+                            this.value =
+                            this.value
+                                .replace(/[^0-9]/g, '')
+                                .slice(0, 3)
+                        "
+                        placeholder="Ej. 123">
+
+                <small class="texto-ayuda">
+                    Solo números.
+                    Máximo 3 cifras.
+                </small>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================
+             ACCIONES
+             ================================== -->
+
+        <div class="form-acciones">
+
+            <button
+                    type="button"
+                    id="btnPagar"
+                    onclick="registrarPago()"
+                    disabled>
+
+                Registrar pago
+
+            </button>
+
+        </div>
+
+
+        <!-- ==================================
+             MENSAJE
+             ================================== -->
+
+        <p
+                id="mensaje"
+                class="mensaje-formulario">
+        </p>
+
+
+    </section>
+
+
+    <!-- ======================================
+         RECIBOS
+         ====================================== -->
+
+    <section class="tabla-seccion">
+
+        <div class="tabla-encabezado">
+
+            <div>
+
+                <h3>
+                    Recibos registrados
+                </h3>
+
+                <p>
+                    Consulta los pagos realizados,
+                    saldos y estados de cada recibo.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Cita
+                    </th>
+
+                    <th>
+                        Paciente
+                    </th>
+
+                    <th>
+                        Total
+                    </th>
+
+                    <th>
+                        Pagado
+                    </th>
+
+                    <th>
+                        Saldo
+                    </th>
+
+                    <th>
+                        %
+                    </th>
+
+                    <th>
+                        Método
+                    </th>
+
+                    <th>
+                        Operación
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="tablaPagos">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
+
+<script src="js/sesion.js"></script>
+
+
+<script>
+
+    protegerPersonalClinica();
+
+</script>
+
+
+<script src="js/navbar.js"></script>
+
+<script src="js/pagos.js"></script>
+
+
+</body>
+
+</html>

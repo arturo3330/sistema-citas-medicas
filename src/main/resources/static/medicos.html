@@ -5,7 +5,13 @@
 
     <meta charset="UTF-8">
 
-    <title>Médicos</title>
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Médicos | Makanitos
+    </title>
 
     <link
             rel="stylesheet"
@@ -17,161 +23,232 @@
 <body>
 
 
-<header>
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
 
-    <h1>
-        Mantenimiento de Médicos
-    </h1>
-
-</header>
-
-
-<div class="menu">
-
-    <a href="dashboard.html">
-        Inicio
-    </a>
-
-    <a href="especialidades.html">
-        Especialidades
-    </a>
-
-    <a href="medicos.html">
-        Médicos
-    </a>
-
-    <a href="pacientes.html">
-        Pacientes
-    </a>
-
-    <a href="horarios.html">
-        Horarios
-    </a>
-
-    <a href="citas.html">
-        Citas
-    </a>
-
-    <a href="cambiar-clave.html">
-        Cambiar contraseña
-    </a>
-
-    <a
-            href="#"
-            onclick="cerrarSesion()">
-
-        Cerrar sesión
-
-    </a>
-
+<div id="appNavbar">
 </div>
 
 
-<div class="contenido">
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
 
-    <h2>
-        Registrar médico
-    </h2>
-
-
-    <input
-            type="hidden"
-            id="idMedico">
+<main class="contenido">
 
 
-    <label>
-        Nombre
-    </label>
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
 
-    <input
-            type="text"
-            id="nombre">
+    <div class="pagina-encabezado">
 
+        <div>
 
-    <label>
-        CMP
-    </label>
+            <h2>
+                Médicos
+            </h2>
 
-    <input
-            type="text"
-            id="cmp">
+            <p>
+                Registra y administra los médicos
+                disponibles en Makanitos.
+            </p>
 
+        </div>
 
-    <label>
-        Especialidad
-    </label>
-
-    <select id="especialidad">
-    </select>
+    </div>
 
 
-    <label>
-        Estado
-    </label>
+    <!-- ======================================
+         FORMULARIO
+         ====================================== -->
 
-    <select id="estado">
+    <section class="formulario-seccion">
 
-        <option value="true">
-            Activo
-        </option>
-
-        <option value="false">
-            Inactivo
-        </option>
-
-    </select>
+        <h3>
+            Registrar médico
+        </h3>
 
 
-    <button onclick="guardar()">
-
-        Guardar
-
-    </button>
+        <input
+                type="hidden"
+                id="idMedico">
 
 
-    <hr>
+        <div class="form-grid">
 
 
-    <h2>
-        Médicos registrados
-    </h2>
+            <div class="form-grupo">
+
+                <label for="nombre">
+                    Nombre
+                </label>
+
+                <input
+                        type="text"
+                        id="nombre"
+                        placeholder="Ej. Dr. Carlos Ramos">
+
+            </div>
 
 
-    <table>
+            <div class="form-grupo">
 
-        <thead>
+                <label for="cmp">
+                    CMP
+                </label>
 
-        <tr>
+                <input
+                        type="text"
+                        id="cmp"
+                        placeholder="Ej. 12345">
 
-            <th>ID</th>
-
-            <th>Nombre</th>
-
-            <th>CMP</th>
-
-            <th>Especialidad</th>
-
-            <th>Estado</th>
-
-            <th>Acciones</th>
-
-        </tr>
-
-        </thead>
+            </div>
 
 
-        <tbody id="tablaMedicos">
-        </tbody>
+            <div class="form-grupo">
 
-    </table>
+                <label for="especialidad">
+                    Especialidad
+                </label>
 
-</div>
+                <select id="especialidad">
+                </select>
 
+            </div>
+
+
+            <div class="form-grupo">
+
+                <label for="estado">
+                    Estado
+                </label>
+
+                <select id="estado">
+
+                    <option value="true">
+                        Activo
+                    </option>
+
+                    <option value="false">
+                        Inactivo
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="form-acciones">
+
+            <button
+                    type="button"
+                    onclick="guardar()">
+
+                Guardar
+
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ======================================
+         LISTADO
+         ====================================== -->
+
+    <section class="tabla-seccion">
+
+        <div class="tabla-encabezado">
+
+            <div>
+
+                <h3>
+                    Médicos registrados
+                </h3>
+
+                <p>
+                    Lista de médicos registrados
+                    en el sistema.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Nombre
+                    </th>
+
+                    <th>
+                        CMP
+                    </th>
+
+                    <th>
+                        Especialidad
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                    <th>
+                        Acciones
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="tablaMedicos">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
 
 <script src="js/sesion.js"></script>
+
+
 <script>
-    protegerAdmin();
+
+    protegerPersonalClinica();
+
 </script>
+
+
+<script src="js/navbar.js"></script>
+
 <script src="js/medicos.js"></script>
 
 

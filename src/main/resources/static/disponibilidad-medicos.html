@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Disponibilidad médica | Makanitos
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
+</head>
+
+<body>
+
+
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
+
+<div id="appNavbar">
+</div>
+
+
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
+
+<main class="contenido">
+
+
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
+
+    <div class="pagina-encabezado">
+
+        <div>
+
+            <h2>
+                Disponibilidad médica
+            </h2>
+
+            <p>
+                Genera automáticamente los horarios
+                de atención de cada médico según
+                las políticas vigentes de la clínica.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         GENERADOR AUTOMÁTICO
+         ====================================== -->
+
+    <section class="formulario-seccion">
+
+        <h3>
+            Generar disponibilidad
+        </h3>
+
+
+        <p class="texto-seccion">
+            Selecciona un médico. El sistema utilizará
+            su especialidad, duración de consulta y
+            política vigente para generar automáticamente
+            sus horarios disponibles.
+        </p>
+
+
+        <div class="form-grid">
+
+
+            <!-- ==================================
+                 MÉDICO
+                 ================================== -->
+
+            <div class="form-grupo">
+
+                <label for="medico">
+                    Médico
+                </label>
+
+                <select id="medico">
+
+                    <option value="">
+                        Seleccione un médico
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================
+             INFORMACIÓN DEL MÉDICO
+             ================================== -->
+
+        <div
+                id="resumenMedico"
+                class="resumen-disponibilidad"
+                style="display: none;">
+
+            <div class="resumen-disponibilidad-item">
+
+                <span class="resumen-label">
+                    Médico
+                </span>
+
+                <strong id="resumenNombreMedico">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="resumen-disponibilidad-item">
+
+                <span class="resumen-label">
+                    Especialidad
+                </span>
+
+                <strong id="resumenEspecialidad">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="resumen-disponibilidad-item">
+
+                <span class="resumen-label">
+                    Duración de consulta
+                </span>
+
+                <strong id="resumenDuracion">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             POLÍTICA VIGENTE
+             ================================== -->
+
+        <div class="info-horario">
+
+            <div class="info-horario-icono">
+                🕒
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Política de atención vigente
+                </strong>
+
+                <p id="infoPoliticaDisponibilidad">
+                    Cargando política de la clínica...
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             ACCIONES
+             ================================== -->
+
+        <div class="form-acciones">
+
+            <button
+                    type="button"
+                    id="btnGenerarHorarios"
+                    onclick="generarHorarios()">
+
+                Generar horarios automáticamente
+
+            </button>
+
+        </div>
+
+
+        <!-- ==================================
+             MENSAJE
+             ================================== -->
+
+        <p
+                id="mensaje"
+                class="mensaje-formulario">
+        </p>
+
+
+    </section>
+
+
+    <!-- ======================================
+         INFORMACIÓN DEL PROCESO
+         ====================================== -->
+
+    <section class="generador-horarios">
+
+        <div class="generador-info">
+
+            <div>
+
+                <h3>
+                    ¿Cómo se generan los horarios?
+                </h3>
+
+                <p>
+                    Makanitos genera automáticamente
+                    los bloques de atención dentro de
+                    los turnos establecidos por la
+                    política vigente de la clínica.
+                </p>
+
+
+                <p>
+                    La duración de cada bloque depende
+                    de la especialidad del médico:
+                    30 minutos o 1 hora.
+                </p>
+
+
+                <p>
+                    El sistema evita horarios pasados,
+                    horas fuera del turno de atención
+                    y registros duplicados.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         HORARIOS GENERADOS
+         ====================================== -->
+
+    <section class="tabla-seccion">
+
+        <div class="tabla-encabezado">
+
+            <div>
+
+                <h3>
+                    Horarios disponibles
+                </h3>
+
+                <p>
+                    Horarios generados automáticamente
+                    para el médico seleccionado.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Fecha
+                    </th>
+
+                    <th>
+                        Día
+                    </th>
+
+                    <th>
+                        Médico
+                    </th>
+
+                    <th>
+                        Especialidad
+                    </th>
+
+                    <th>
+                        Inicio
+                    </th>
+
+                    <th>
+                        Fin
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="tablaHorariosGenerados">
+
+                <tr>
+
+                    <td
+                            colspan="7"
+                            class="tabla-vacia">
+
+                        Seleccione un médico para
+                        consultar sus horarios.
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
+
+<script src="js/sesion.js"></script>
+
+
+<script>
+
+    protegerPersonalClinica();
+
+</script>
+
+
+<script src="js/navbar.js"></script>
+
+<script src="js/disponibilidad-medicos.js"></script>
+
+
+</body>
+
+</html>

@@ -5,8 +5,12 @@
 
     <meta charset="UTF-8">
 
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
     <title>
-        Pacientes
+        Pacientes | Makanitos
     </title>
 
     <link
@@ -19,155 +23,283 @@
 <body>
 
 
-<header>
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
 
-    <h1>
-        Mantenimiento de Pacientes
-    </h1>
-
-</header>
-
-
-<div class="menu">
-
-    <a href="dashboard.html">
-        Inicio
-    </a>
-
-    <a href="especialidades.html">
-        Especialidades
-    </a>
-
-    <a href="medicos.html">
-        Médicos
-    </a>
-
-    <a href="pacientes.html">
-        Pacientes
-    </a>
-
-    <a href="horarios.html">
-        Horarios
-    </a>
-
-    <a href="citas.html">
-        Citas
-    </a>
-
-    <a href="cambiar-clave.html">
-        Cambiar contraseña
-    </a>
-
-    <a
-            href="#"
-            onclick="cerrarSesion()">
-
-        Cerrar sesión
-
-    </a>
-
+<div id="appNavbar">
 </div>
 
 
-<div class="contenido">
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
 
-    <h2>
-        Registrar paciente
-    </h2>
-
-
-    <input
-            type="hidden"
-            id="idPaciente">
+<main class="contenido">
 
 
-    <label>
-        DNI
-    </label>
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
 
-    <input
-            type="text"
-            id="dni"
-            maxlength="8">
+    <div class="pagina-encabezado">
 
+        <div>
 
-    <label>
-        Nombre
-    </label>
+            <h2>
+                Pacientes
+            </h2>
 
-    <input
-            type="text"
-            id="nombre">
+            <p>
+                Registra y administra los pacientes
+                atendidos en Makanitos.
+            </p>
 
+        </div>
 
-    <label>
-        Teléfono
-    </label>
-
-    <input
-            type="text"
-            id="telefono">
+    </div>
 
 
-    <label>
-        Correo
-    </label>
+    <!-- ======================================
+         FORMULARIO
+         ====================================== -->
 
-    <input
-            type="email"
-            id="correo">
+    <section class="formulario-seccion">
 
-
-    <button onclick="guardar()">
-
-        Guardar
-
-    </button>
+        <h3>
+            Registrar paciente
+        </h3>
 
 
-    <hr>
+        <input
+                type="hidden"
+                id="idPaciente">
 
 
-    <h2>
-        Pacientes registrados
-    </h2>
+        <div class="form-grid">
 
 
-    <table>
+            <!-- ==================================
+                 DNI
+                 ================================== -->
 
-        <thead>
+            <div class="form-grupo">
 
-        <tr>
+                <label for="dni">
+                    DNI
+                </label>
 
-            <th>ID</th>
+                <input
+                        type="text"
+                        id="dni"
+                        maxlength="8"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        oninput="
+                            this.value =
+                            this.value
+                                .replace(/[^0-9]/g,'')
+                                .slice(0,8)
+                        "
+                        placeholder="Ej. 12345678">
 
-            <th>DNI</th>
+                <small class="texto-ayuda">
+                    Solo números. Máximo 8 dígitos.
+                </small>
 
-            <th>Nombre</th>
-
-            <th>Teléfono</th>
-
-            <th>Correo</th>
-
-            <th>Acciones</th>
-
-        </tr>
-
-        </thead>
+            </div>
 
 
-        <tbody id="tablaPacientes">
-        </tbody>
+            <!-- ==================================
+                 NOMBRE
+                 ================================== -->
 
-    </table>
+            <div class="form-grupo">
 
-</div>
+                <label for="nombre">
+                    Nombre
+                </label>
 
+                <input
+                        type="text"
+                        id="nombre"
+                        placeholder="Ej. Ana Torres">
+
+            </div>
+
+
+            <!-- ==================================
+                 TELÉFONO
+                 ================================== -->
+
+            <div class="form-grupo">
+
+                <label for="telefono">
+                    Teléfono
+                </label>
+
+                <input
+                        type="text"
+                        id="telefono"
+                        maxlength="10"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        oninput="
+                            this.value =
+                            this.value
+                                .replace(/[^0-9]/g,'')
+                                .slice(0,10)
+                        "
+                        placeholder="Ej. 999888777">
+
+                <small class="texto-ayuda">
+                    Solo números. Máximo 10 dígitos.
+                </small>
+
+            </div>
+
+
+            <!-- ==================================
+                 CORREO
+                 ================================== -->
+
+            <div class="form-grupo">
+
+                <label for="correo">
+                    Correo electrónico
+                </label>
+
+                <input
+                        type="email"
+                        id="correo"
+                        placeholder="Ej. paciente@correo.com">
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================
+             ACCIONES
+             ================================== -->
+
+        <div class="form-acciones">
+
+            <button
+                    type="button"
+                    onclick="guardar()">
+
+                Guardar
+
+            </button>
+
+        </div>
+
+
+        <!-- ==================================
+             MENSAJE
+             ================================== -->
+
+        <p
+                id="mensaje"
+                class="mensaje-formulario">
+        </p>
+
+
+    </section>
+
+
+    <!-- ======================================
+         LISTADO
+         ====================================== -->
+
+    <section class="tabla-seccion">
+
+        <div class="tabla-encabezado">
+
+            <div>
+
+                <h3>
+                    Pacientes registrados
+                </h3>
+
+                <p>
+                    Lista de pacientes registrados
+                    en el sistema.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        DNI
+                    </th>
+
+                    <th>
+                        Nombre
+                    </th>
+
+                    <th>
+                        Teléfono
+                    </th>
+
+                    <th>
+                        Correo
+                    </th>
+
+                    <th>
+                        Acciones
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="tablaPacientes">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
 
 <script src="js/sesion.js"></script>
+
+
 <script>
-    protegerAdmin();
+
+    protegerPersonalClinica();
+
 </script>
+
+
+<script src="js/navbar.js"></script>
+
 <script src="js/pacientes.js"></script>
 
 

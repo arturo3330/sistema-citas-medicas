@@ -5,8 +5,12 @@
 
     <meta charset="UTF-8">
 
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
     <title>
-        Mis citas
+        Mis citas | Makanitos
     </title>
 
     <link
@@ -15,87 +19,144 @@
 
 </head>
 
-
 <body>
 
 
-<header>
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
 
-    <h1>
-        Mis Citas Médicas
-    </h1>
-
-</header>
-
-
-<div class="menu">
-
-    <a href="dashboard.html">
-        Inicio
-    </a>
-
-    <a href="reservar-cita.html">
-        Reservar cita
-    </a>
-
-    <a href="mis-citas.html">
-        Mis citas
-    </a>
-
-    <a href="cambiar-clave.html">
-        Cambiar contraseña
-    </a>
-
-    <a
-            href="#"
-            onclick="cerrarSesion()">
-
-        Cerrar sesión
-
-    </a>
-
+<div id="appNavbar">
 </div>
 
 
-<div class="contenido">
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
 
-    <h2>
-        Mis citas registradas
-    </h2>
-
-
-    <table>
-
-        <thead>
-
-        <tr>
-
-            <th>ID</th>
-
-            <th>Médico</th>
-
-            <th>Especialidad</th>
-
-            <th>Fecha</th>
-
-            <th>Hora</th>
-
-            <th>Estado</th>
-
-        </tr>
-
-        </thead>
+<main class="contenido">
 
 
-        <tbody id="tablaCitas">
-        </tbody>
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
 
-    </table>
+    <div class="pagina-encabezado">
 
-</div>
+        <div>
 
+            <h2>
+                Mis citas
+            </h2>
+
+            <p>
+                Consulta tus citas médicas
+                y revisa su estado actual.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         LISTADO DE CITAS
+         ====================================== -->
+
+    <section class="tabla-seccion">
+
+        <div class="tabla-encabezado">
+
+            <div>
+
+                <h3>
+                    Mis citas registradas
+                </h3>
+
+                <p>
+                    Aquí encontrarás las citas
+                    asociadas a tu cuenta.
+                </p>
+
+            </div>
+
+
+            <a
+                    href="reservar-cita.html"
+                    class="cuenta-boton">
+
+                Reservar nueva cita
+
+            </a>
+
+        </div>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Médico
+                    </th>
+
+                    <th>
+                        Especialidad
+                    </th>
+
+                    <th>
+                        Fecha
+                    </th>
+
+                    <th>
+                        Hora
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="tablaCitas">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
 
 <script src="js/sesion.js"></script>
+
+
+<script>
+
+    protegerPaciente();
+
+</script>
+
+
+<script src="js/navbar.js"></script>
 
 <script src="js/mis-citas.js"></script>
 

@@ -1,57 +1,184 @@
+// ==========================================
+// CONSTANTES
+// ==========================================
+
+const COSTO_MAXIMO =
+    999999.99;
+
+
+// ==========================================
+// LISTAR ESPECIALIDADES ACTIVAS
+// ==========================================
+
 async function listar() {
 
-    const respuesta =
-        await fetch("/especialidades");
+    try {
 
-    const datos =
-        await respuesta.json();
+        const respuesta =
+            await fetch(
+                "/especialidades"
+            );
 
-    const tabla =
-        document.getElementById(
-            "tablaEspecialidades"
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No se pudieron cargar las especialidades"
+            );
+        }
+
+
+        const datos =
+            await respuesta.json();
+
+
+        const tabla =
+            document.getElementById(
+                "tablaEspecialidades"
+            );
+
+
+        tabla.innerHTML =
+            "";
+
+
+        // ======================================
+        // SOLO ESPECIALIDADES ACTIVAS
+        // ======================================
+
+        const activas =
+            datos.filter(
+                e =>
+                    e.estado === true
+            );
+
+
+        if (
+            activas.length === 0
+        ) {
+
+            tabla.innerHTML = `
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="tabla-vacia">
+
+                        No hay especialidades activas registradas.
+
+                    </td>
+
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        activas.forEach(
+            e => {
+
+                const duracion =
+                    Number(
+                        e.tiempoAtencionMinutos
+                        ?? 0
+                    );
+
+
+                const costo =
+                    Number(
+                        e.costoConsulta
+                        ?? 0
+                    );
+
+
+                let textoDuracion =
+                    duracion + " min";
+
+
+                if (
+                    duracion === 60
+                ) {
+
+                    textoDuracion =
+                        "1 hora";
+                }
+
+
+                tabla.innerHTML += `
+                    <tr>
+
+                        <td>
+                            ${e.idEspecialidad}
+                        </td>
+
+                        <td>
+                            ${escaparTexto(
+                    e.nombre
+                )}
+                        </td>
+
+                        <td>
+                            ${textoDuracion}
+                        </td>
+
+                        <td>
+                            S/ ${costo.toFixed(2)}
+                        </td>
+
+                        <td>
+                            Activo
+                        </td>
+
+                        <td>
+
+                            <button
+                                type="button"
+                                onclick="editar(
+                                    ${e.idEspecialidad}
+                                )">
+
+                                Editar
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onclick="eliminar(
+                                    ${e.idEspecialidad}
+                                )">
+
+                                Desactivar
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+                `;
+            }
         );
 
-    tabla.innerHTML = "";
 
-    datos.forEach(e => {
+    } catch (error) {
 
-        tabla.innerHTML += `
-            <tr>
+        console.error(
+            error
+        );
 
-                <td>
-                    ${e.idEspecialidad}
-                </td>
 
-                <td>
-                    ${e.nombre}
-                </td>
-
-                <td>
-                    ${e.estado ? "Activo" : "Inactivo"}
-                </td>
-
-                <td>
-
-                    <button onclick="editar(
-                        ${e.idEspecialidad},
-                        '${e.nombre}',
-                        ${e.estado}
-                    )">
-                        Editar
-                    </button>
-
-                    <button onclick="eliminar(
-                        ${e.idEspecialidad}
-                    )">
-                        Eliminar
-                    </button>
-
-                </td>
-
-            </tr>
-        `;
-    });
+        mostrarMensaje(
+            "No se pudieron cargar las especialidades.",
+            "error"
+        );
+    }
 }
+
+
+// ==========================================
+// GUARDAR / ACTUALIZAR
+// ==========================================
 
 async function guardar() {
 
@@ -60,114 +187,737 @@ async function guardar() {
             "idEspecialidad"
         ).value;
 
+
     const nombre =
         document.getElementById(
             "nombre"
+        ).value.trim();
+
+
+    const tiempoTexto =
+        document.getElementById(
+            "tiempoAtencionMinutos"
         ).value;
+
+
+    const costoTexto =
+        document.getElementById(
+            "costoConsulta"
+        ).value.trim();
+
 
     const estado =
         document.getElementById(
             "estado"
         ).value === "true";
 
-    const datos = {
-        nombre: nombre,
-        estado: estado
-    };
 
-    if (id === "") {
-
-        await fetch(
-            "/especialidades",
-            {
-
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body: JSON.stringify(datos)
-            }
+    const tiempoAtencionMinutos =
+        Number(
+            tiempoTexto
         );
 
-    } else {
 
-        await fetch(
-            "/especialidades/" + id,
-            {
-
-                method: "PUT",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body: JSON.stringify(datos)
-            }
-        );
-    }
-
-    limpiar();
-
-    listar();
-}
-
-function editar(
-    id,
-    nombre,
-    estado
-) {
-
-    document.getElementById(
-        "idEspecialidad"
-    ).value = id;
-
-    document.getElementById(
-        "nombre"
-    ).value = nombre;
-
-    document.getElementById(
-        "estado"
-    ).value = estado;
-}
-
-async function eliminar(id) {
-
-    const confirmar =
-        confirm(
-            "¿Desea eliminar la especialidad?"
+    const costoConsulta =
+        Number(
+            costoTexto
         );
 
-    if (!confirmar) {
+
+    // ======================================
+    // VALIDAR NOMBRE
+    // ======================================
+
+    if (
+        nombre === ""
+    ) {
+
+        mostrarMensaje(
+            "Ingrese el nombre de la especialidad.",
+            "error"
+        );
+
         return;
     }
 
-    await fetch(
-        "/especialidades/" + id,
-        {
-            method: "DELETE"
+
+    // ======================================
+    // VALIDAR DURACIÓN
+    // ======================================
+
+    if (
+        tiempoTexto === ""
+        ||
+        (
+            tiempoAtencionMinutos !== 30
+            &&
+            tiempoAtencionMinutos !== 60
+        )
+    ) {
+
+        mostrarMensaje(
+            "La duración debe ser de 30 minutos o 1 hora.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // VALIDAR COSTO
+    // ======================================
+
+    if (
+        costoTexto === ""
+        ||
+        Number.isNaN(
+            costoConsulta
+        )
+        ||
+        costoConsulta <= 0
+    ) {
+
+        mostrarMensaje(
+            "El costo de consulta debe ser mayor que cero.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // COSTO MÁXIMO
+    // ======================================
+
+    if (
+        costoConsulta > COSTO_MAXIMO
+    ) {
+
+        mostrarMensaje(
+            "El costo máximo permitido es S/ 999999.99.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // MÁXIMO 2 DECIMALES
+    // ======================================
+
+    if (
+        !validarMaximoDosDecimales(
+            costoTexto
+        )
+    ) {
+
+        mostrarMensaje(
+            "El costo debe tener como máximo 2 decimales.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // CONSTRUIR DATOS
+    // ======================================
+
+    const datos = {
+
+        nombre:
+        nombre,
+
+        tiempoAtencionMinutos:
+        tiempoAtencionMinutos,
+
+        costoConsulta:
+        costoConsulta,
+
+        estado:
+        estado
+    };
+
+
+    try {
+
+        let respuesta;
+
+
+        // ==================================
+        // NUEVA ESPECIALIDAD
+        // ==================================
+
+        if (
+            id === ""
+        ) {
+
+            respuesta =
+                await fetch(
+                    "/especialidades",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                datos
+                            )
+                    }
+                );
+
+        }
+
+            // ==================================
+            // ACTUALIZAR
+        // ==================================
+
+        else {
+
+            respuesta =
+                await fetch(
+                    "/especialidades/" + id,
+                    {
+
+                        method:
+                            "PUT",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                datos
+                            )
+                    }
+                );
+        }
+
+
+        if (
+            !respuesta.ok
+        ) {
+
+            const texto =
+                await respuesta.text();
+
+
+            throw new Error(
+                texto
+                ||
+                "No se pudo guardar la especialidad"
+            );
+        }
+
+
+        mostrarMensaje(
+            id === ""
+                ? "Especialidad registrada correctamente."
+                : "Especialidad actualizada correctamente.",
+            "ok"
+        );
+
+
+        limpiar();
+
+
+        await listar();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        mostrarMensaje(
+            error.message
+            ||
+            "Ocurrió un error al guardar.",
+            "error"
+        );
+    }
+}
+
+
+// ==========================================
+// EDITAR
+// ==========================================
+
+async function editar(
+    id
+) {
+
+    try {
+
+        const respuesta =
+            await fetch(
+                "/especialidades/" + id
+            );
+
+
+        if (
+            !respuesta.ok
+        ) {
+
+            throw new Error(
+                "No se pudo cargar la especialidad"
+            );
+        }
+
+
+        const e =
+            await respuesta.json();
+
+
+        document.getElementById(
+            "idEspecialidad"
+        ).value =
+            e.idEspecialidad;
+
+
+        document.getElementById(
+            "nombre"
+        ).value =
+            e.nombre ?? "";
+
+
+        document.getElementById(
+            "tiempoAtencionMinutos"
+        ).value =
+            e.tiempoAtencionMinutos ?? "";
+
+
+        document.getElementById(
+            "costoConsulta"
+        ).value =
+            e.costoConsulta ?? "";
+
+
+        document.getElementById(
+            "estado"
+        ).value =
+            String(
+                e.estado
+            );
+
+
+        window.scrollTo(
+            {
+                top: 0,
+                behavior: "smooth"
+            }
+        );
+
+
+        mostrarMensaje(
+            "Especialidad cargada para edición.",
+            "ok"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        mostrarMensaje(
+            "No se pudo cargar la especialidad seleccionada.",
+            "error"
+        );
+    }
+}
+
+
+// ==========================================
+// DESACTIVAR
+// ==========================================
+
+async function eliminar(
+    id
+) {
+
+    const confirmar =
+        confirm(
+            "¿Desea desactivar esta especialidad?"
+        );
+
+
+    if (
+        !confirmar
+    ) {
+
+        return;
+    }
+
+
+    try {
+
+        const respuesta =
+            await fetch(
+                "/especialidades/" + id,
+                {
+
+                    method:
+                        "DELETE"
+                }
+            );
+
+
+        const texto =
+            await respuesta.text();
+
+
+        if (
+            !respuesta.ok
+        ) {
+
+            throw new Error(
+                texto
+                ||
+                "No se pudo desactivar la especialidad"
+            );
+        }
+
+
+        mostrarMensaje(
+            texto
+            ||
+            "Especialidad desactivada correctamente.",
+            "ok"
+        );
+
+
+        const idActual =
+            document.getElementById(
+                "idEspecialidad"
+            ).value;
+
+
+        if (
+            Number(
+                idActual
+            )
+            ===
+            Number(
+                id
+            )
+        ) {
+
+            limpiar();
+        }
+
+
+        await listar();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        mostrarMensaje(
+            error.message
+            ||
+            "No se pudo desactivar la especialidad.",
+            "error"
+        );
+    }
+}
+
+
+// ==========================================
+// VALIDAR MÁXIMO 2 DECIMALES
+// ==========================================
+
+function validarMaximoDosDecimales(
+    valor
+) {
+
+    return /^\d+(\.\d{1,2})?$/.test(
+        valor
+    );
+}
+
+
+// ==========================================
+// CONTROL DEL CAMPO COSTO
+// ==========================================
+
+function configurarCosto() {
+
+    const input =
+        document.getElementById(
+            "costoConsulta"
+        );
+
+
+    if (
+        !input
+    ) {
+
+        return;
+    }
+
+
+    input.addEventListener(
+        "input",
+        function () {
+
+            const valor =
+                this.value;
+
+
+            if (
+                valor === ""
+            ) {
+
+                return;
+            }
+
+
+            let numero =
+                Number(
+                    valor
+                );
+
+
+            // ==================================
+            // EVITAR NEGATIVOS
+            // ==================================
+
+            if (
+                !Number.isNaN(
+                    numero
+                )
+                &&
+                numero < 0
+            ) {
+
+                this.value =
+                    "";
+
+                return;
+            }
+
+
+            // ==================================
+            // MÁXIMO 999999.99
+            // ==================================
+
+            if (
+                !Number.isNaN(
+                    numero
+                )
+                &&
+                numero > COSTO_MAXIMO
+            ) {
+
+                this.value =
+                    COSTO_MAXIMO
+                        .toFixed(
+                            2
+                        );
+
+                return;
+            }
+
+
+            // ==================================
+            // MÁXIMO DOS DECIMALES
+            // ==================================
+
+            if (
+                valor.includes(
+                    "."
+                )
+            ) {
+
+                const partes =
+                    valor.split(
+                        "."
+                    );
+
+
+                if (
+                    partes.length > 1
+                    &&
+                    partes[1].length > 2
+                ) {
+
+                    this.value =
+                        partes[0]
+                        +
+                        "."
+                        +
+                        partes[1]
+                            .substring(
+                                0,
+                                2
+                            );
+                }
+            }
         }
     );
-
-    listar();
 }
+
+
+// ==========================================
+// LIMPIAR FORMULARIO
+// ==========================================
 
 function limpiar() {
 
     document.getElementById(
         "idEspecialidad"
-    ).value = "";
+    ).value =
+        "";
+
 
     document.getElementById(
         "nombre"
-    ).value = "";
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "tiempoAtencionMinutos"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "costoConsulta"
+    ).value =
+        "";
+
 
     document.getElementById(
         "estado"
-    ).value = "true";
+    ).value =
+        "true";
+
+
+    mostrarMensaje(
+        "",
+        "ok"
+    );
 }
 
-listar();
+
+// ==========================================
+// MENSAJES
+// ==========================================
+
+function mostrarMensaje(
+    texto,
+    tipo
+) {
+
+    const mensaje =
+        document.getElementById(
+            "mensaje"
+        );
+
+
+    if (
+        !mensaje
+    ) {
+
+        return;
+    }
+
+
+    mensaje.innerText =
+        texto;
+
+
+    if (
+        tipo === "ok"
+    ) {
+
+        mensaje.style.color =
+            "#15803d";
+
+    } else {
+
+        mensaje.style.color =
+            "#b3261e";
+    }
+}
+
+
+// ==========================================
+// ESCAPAR TEXTO
+// ==========================================
+
+function escaparTexto(
+    texto
+) {
+
+    if (
+        texto == null
+    ) {
+
+        return "";
+    }
+
+
+    return String(
+        texto
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+}
+
+
+// ==========================================
+// INICIO
+// ==========================================
+
+async function iniciar() {
+
+    configurarCosto();
+
+    await listar();
+}
+
+
+iniciar();

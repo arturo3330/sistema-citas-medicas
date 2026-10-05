@@ -5,8 +5,12 @@
 
     <meta charset="UTF-8">
 
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
     <title>
-        Panel Principal
+        Makanitos
     </title>
 
     <link
@@ -18,159 +22,730 @@
 <body>
 
 
-<header>
+<!-- ==========================================
+     NAVBAR
+     ========================================== -->
 
-    <h1>
-        Sistema de Citas Médicas
-    </h1>
-
-</header>
-
-
-<div class="menu">
-
-    <a href="dashboard.html">
-        Inicio
-    </a>
+<div id="appNavbar">
+</div>
 
 
-    <span id="menuAdmin"
-          style="display:none;">
+<!-- ==========================================
+     PORTADA PRINCIPAL
+     ========================================== -->
 
-        <a href="especialidades.html">
-            Especialidades
+<main class="inicio-makanitos">
+
+
+    <!-- ======================================
+         MENSAJE PRINCIPAL
+         ====================================== -->
+
+    <section class="hero-makanitos">
+
+        <h1>
+            Tu salud en manos expertas.
+        </h1>
+
+        <p>
+            ¿Qué necesitas hacer hoy?
+        </p>
+
+    </section>
+
+
+    <!-- ======================================
+         ACCESOS ADMIN / SECRETARIA
+         ====================================== -->
+
+    <section
+            id="accesosPersonal"
+            class="acciones-inicio"
+            style="display:none;">
+
+
+        <a
+                href="medicos.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                👨‍⚕️
+            </div>
+
+            <h3>
+                Médicos
+            </h3>
+
+            <p>
+                Gestionar médicos registrados.
+            </p>
+
         </a>
 
-        <a href="medicos.html">
-            Médicos
+
+        <a
+                href="especialidades.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                🩺
+            </div>
+
+            <h3>
+                Especialidades
+            </h3>
+
+            <p>
+                Administrar especialidades médicas.
+            </p>
+
         </a>
 
-        <a href="pacientes.html">
-            Pacientes
+
+        <a
+                href="disponibilidad-medicos.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                🕒
+            </div>
+
+            <h3>
+                Disponibilidad
+            </h3>
+
+            <p>
+                Configurar horarios de médicos.
+            </p>
+
         </a>
 
-        <a href="horarios.html">
-            Horarios
+
+        <a
+                href="pacientes.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                🧑
+            </div>
+
+            <h3>
+                Pacientes
+            </h3>
+
+            <p>
+                Gestionar pacientes registrados.
+            </p>
+
         </a>
 
-        <a href="citas.html">
-            Citas
+
+        <a
+                href="citas.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                📅
+            </div>
+
+            <h3>
+                Citas
+            </h3>
+
+            <p>
+                Revisar y administrar citas.
+            </p>
+
         </a>
 
-        <a href="usuarios.html">
-            Usuarios
+
+        <a
+                href="pagos.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                💳
+            </div>
+
+            <h3>
+                Pagos
+            </h3>
+
+            <p>
+                Consultar pagos y recibos.
+            </p>
+
         </a>
 
-    </span>
+    </section>
 
 
-    <span id="menuPaciente"
-          style="display:none;">
+    <!-- ======================================
+         ACCESOS PACIENTE
+         ====================================== -->
 
-        <a href="reservar-cita.html">
-            Reservar cita
+    <section
+            id="accesosPaciente"
+            class="acciones-inicio"
+            style="display:none;">
+
+
+        <!-- AGENDAR -->
+
+        <a
+                href="reservar-cita.html"
+                class="accion-card accion-principal">
+
+            <div class="accion-icono">
+                📅
+            </div>
+
+            <h3>
+                Agendar una cita
+            </h3>
+
+            <p>
+                Elige especialidad, médico,
+                fecha y horario disponible.
+            </p>
+
         </a>
 
-        <a href="mis-citas.html">
-            Mis citas
+
+        <!-- MIS CITAS -->
+
+        <a
+                href="mis-citas.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                📋
+            </div>
+
+            <h3>
+                Mis citas
+            </h3>
+
+            <p>
+                Consulta tus próximas citas.
+            </p>
+
         </a>
 
-    </span>
+
+        <!-- MIS PAGOS -->
+
+        <a
+                href="mis-pagos.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                💳
+            </div>
+
+            <h3>
+                Mis pagos
+            </h3>
+
+            <p>
+                Revisa pagos, saldos y recibos.
+            </p>
+
+        </a>
 
 
-    <a href="cambiar-clave.html">
-        Cambiar contraseña
-    </a>
+        <!-- BUSCAR MÉDICO -->
+
+        <a
+                href="buscar-medico.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                👨‍⚕️
+            </div>
+
+            <h3>
+                Buscar un médico
+            </h3>
+
+            <p>
+                Consulta los médicos disponibles.
+            </p>
+
+        </a>
 
 
-    <a
-            href="#"
-            onclick="cerrarSesion()">
+        <!-- ESPECIALIDADES -->
 
-        Cerrar sesión
+        <a
+                href="especialidades-paciente.html"
+                class="accion-card">
 
-    </a>
+            <div class="accion-icono">
+                🩺
+            </div>
+
+            <h3>
+                Especialidades
+            </h3>
+
+            <p>
+                Conoce nuestras especialidades.
+            </p>
+
+        </a>
+
+
+        <!-- POLÍTICAS -->
+
+        <a
+                href="politica-clinica.html"
+                class="accion-card">
+
+            <div class="accion-icono">
+                📄
+            </div>
+
+            <h3>
+                Políticas
+            </h3>
+
+            <p>
+                Consulta las políticas de atención.
+            </p>
+
+        </a>
+
+    </section>
+
+
+    <!-- ======================================
+         ACTIVIDAD RECIENTE
+         ====================================== -->
+
+    <section class="actividad-dashboard">
+
+        <div class="seccion-titulo">
+
+            <h2>
+                Actividad reciente
+            </h2>
+
+        </div>
+
+
+        <div
+                id="actividadReciente"
+                class="actividad-reciente">
+
+            <div class="actividad-vacia">
+
+                <p>
+                    Cargando actividad reciente...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ======================================
+         TESTIMONIOS
+         ====================================== -->
+
+    <section class="testimonios-seccion">
+
+        <div class="testimonios-titulo">
+
+            <div class="testimonios-icono">
+                ❤
+            </div>
+
+            <h2>
+                Lo que dicen nuestros pacientes
+            </h2>
+
+        </div>
+
+
+        <div class="testimonios-grid">
+
+
+            <!-- TESTIMONIO 1 -->
+
+            <article class="testimonio-card">
+
+                <p>
+                    "Fue una experiencia muy positiva,
+                    el equipo médico fue profesional
+                    y atento. La atención superó mis
+                    expectativas."
+                </p>
+
+                <div class="testimonio-separador">
+                </div>
+
+                <div class="testimonio-estrellas">
+                    ★★★★★
+                </div>
+
+                <strong>
+                    María José G.
+                </strong>
+
+                <span>
+                    Paciente
+                </span>
+
+            </article>
+
+
+            <!-- TESTIMONIO 2 -->
+
+            <article class="testimonio-card">
+
+                <p>
+                    "Excelente atención del personal.
+                    El médico me explicó todo
+                    detalladamente y resolvió todas
+                    mis dudas."
+                </p>
+
+                <div class="testimonio-separador">
+                </div>
+
+                <div class="testimonio-estrellas">
+                    ★★★★★
+                </div>
+
+                <strong>
+                    Carlos Andrés M.
+                </strong>
+
+                <span>
+                    Paciente
+                </span>
+
+            </article>
+
+
+            <!-- TESTIMONIO 3 -->
+
+            <article class="testimonio-card">
+
+                <p>
+                    "Las instalaciones son cómodas
+                    y la atención fue rápida.
+                    Me sentí segura durante todo
+                    el proceso."
+                </p>
+
+                <div class="testimonio-separador">
+                </div>
+
+                <div class="testimonio-estrellas">
+                    ★★★★★
+                </div>
+
+                <strong>
+                    Alejandra S.
+                </strong>
+
+                <span>
+                    Paciente
+                </span>
+
+            </article>
+
+
+            <!-- TESTIMONIO 4 -->
+
+            <article class="testimonio-card">
+
+                <p>
+                    "Quedé muy satisfecho con la
+                    atención recibida. Definitivamente
+                    volvería a confiar en este equipo."
+                </p>
+
+                <div class="testimonio-separador">
+                </div>
+
+                <div class="testimonio-estrellas">
+                    ★★★★★
+                </div>
+
+                <strong>
+                    Roberto F.
+                </strong>
+
+                <span>
+                    Paciente
+                </span>
+
+            </article>
+
+        </div>
+
+
+        <!-- ==================================
+             DEJAR FELICITACIÓN
+             ================================== -->
+
+        <div class="felicitacion-invitacion">
+
+            <div class="felicitacion-icono">
+                ☺
+            </div>
+
+
+            <div class="felicitacion-texto">
+
+                <h3>
+                    ¿Tuviste una buena experiencia?
+                </h3>
+
+                <p>
+                    Comparte tu historia en nuestro
+                    Libro de Felicitaciones y ayuda
+                    a otros pacientes.
+                </p>
+
+            </div>
+
+
+            <button
+                    type="button"
+                    class="btn-felicitacion"
+                    onclick="abrirModalFelicitacion()">
+
+                Deja tu felicitación
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     MODAL - LIBRO DE FELICITACIONES
+     ========================================== -->
+
+<div
+        id="modalFelicitacion"
+        class="modal-felicitacion">
+
+
+    <div class="modal-felicitacion-contenido">
+
+
+        <!-- CERRAR -->
+
+        <button
+                type="button"
+                class="modal-cerrar"
+                onclick="cerrarModalFelicitacion()"
+                aria-label="Cerrar">
+
+            ×
+
+        </button>
+
+
+        <!-- TÍTULO -->
+
+        <div class="modal-titulo">
+
+            <span class="modal-icono">
+                ☺
+            </span>
+
+            <h3>
+                Libro de felicitaciones
+            </h3>
+
+        </div>
+
+
+        <!-- EXPERIENCIA -->
+
+        <div class="form-grupo">
+
+            <label for="felicitacionExperiencia">
+
+                ¿Qué momento o experiencia de tu
+                atención en la clínica te gustaría
+                compartir? *
+
+            </label>
+
+            <textarea
+                    id="felicitacionExperiencia"
+                    rows="5"
+                    maxlength="500"
+                    placeholder="Cuéntanos tu experiencia...">
+            </textarea>
+
+        </div>
+
+
+        <!-- ÁREA -->
+
+        <div class="form-grupo">
+
+            <label for="felicitacionArea">
+
+                ¿A qué área corresponde
+                la atención recibida? *
+
+            </label>
+
+            <select id="felicitacionArea">
+
+                <option value="">
+                    Seleccione un área
+                </option>
+
+                <option value="MEDICINA_GENERAL">
+                    Medicina General
+                </option>
+
+                <option value="CARDIOLOGIA">
+                    Cardiología
+                </option>
+
+                <option value="PEDIATRIA">
+                    Pediatría
+                </option>
+
+                <option value="OFTALMOLOGIA">
+                    Oftalmología
+                </option>
+
+                <option value="OTRA">
+                    Otra
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- PERSONAL -->
+
+        <div class="form-grupo">
+
+            <label for="felicitacionPersonal">
+
+                ¿Nos podrías compartir el nombre
+                de la persona que te brindó
+                atención memorable?
+
+            </label>
+
+            <input
+                    type="text"
+                    id="felicitacionPersonal"
+                    maxlength="120"
+                    placeholder="Ej. Dr. Juan Pérez">
+
+        </div>
+
+
+        <!-- PACIENTE -->
+
+        <div class="form-grupo">
+
+            <label for="felicitacionPaciente">
+
+                Por favor, indique sus
+                nombres y apellidos *
+
+            </label>
+
+            <input
+                    type="text"
+                    id="felicitacionPaciente"
+                    maxlength="150"
+                    placeholder="Ingrese su nombre">
+
+        </div>
+
+
+        <!-- CALIFICACIÓN -->
+
+        <div class="form-grupo">
+
+            <label for="felicitacionPuntuacion">
+                Calificación
+            </label>
+
+            <select id="felicitacionPuntuacion">
+
+                <option value="5">
+                    ★★★★★ Excelente
+                </option>
+
+                <option value="4">
+                    ★★★★☆ Muy buena
+                </option>
+
+                <option value="3">
+                    ★★★☆☆ Buena
+                </option>
+
+                <option value="2">
+                    ★★☆☆☆ Regular
+                </option>
+
+                <option value="1">
+                    ★☆☆☆☆ Mala
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- MENSAJE -->
+
+        <p
+                id="mensajeFelicitacion"
+                class="mensaje-formulario">
+        </p>
+
+
+        <!-- ENVIAR -->
+
+        <button
+                type="button"
+                class="btn-enviar-felicitacion"
+                onclick="enviarFelicitacion()">
+
+            Enviar
+
+        </button>
+
+    </div>
 
 </div>
 
 
-<div class="contenido">
-
-    <h2>
-        Panel principal
-    </h2>
-
-
-    <p>
-        Bienvenido,
-        <strong id="nombreUsuario">
-        </strong>
-    </p>
-
-
-    <p>
-        Usuario:
-        <strong id="usernameUsuario">
-        </strong>
-    </p>
-
-
-    <p>
-        Rol:
-        <strong id="rolUsuario">
-        </strong>
-    </p>
-
-</div>
-
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
 
 <script src="js/sesion.js"></script>
 
+<script src="js/navbar.js"></script>
 
-<script>
-
-    const usuario =
-        obtenerUsuarioSesion();
-
-
-    document.getElementById(
-        "nombreUsuario"
-    ).innerText =
-        usuario.nombre;
-
-
-    document.getElementById(
-        "usernameUsuario"
-    ).innerText =
-        usuario.username;
-
-
-    document.getElementById(
-        "rolUsuario"
-    ).innerText =
-        usuario.rol;
-
-
-    if (esAdmin()) {
-
-        document.getElementById(
-            "menuAdmin"
-        ).style.display =
-            "inline";
-
-    }
-
-
-    if (esPaciente()) {
-
-        document.getElementById(
-            "menuPaciente"
-        ).style.display =
-            "inline";
-
-    }
-
-</script>
+<script src="js/dashboard.js"></script>
 
 
 </body>

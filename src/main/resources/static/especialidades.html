@@ -2,108 +2,310 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <title>Especialidades</title>
-    <link rel="stylesheet" href="css/estilos.css">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Especialidades | Makanitos
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="css/estilos.css">
+
 </head>
 
 <body>
 
-<header>
-    <h1>Mantenimiento de Especialidades</h1>
-</header>
 
-<div class="menu">
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
 
-    <a href="dashboard.html">Inicio</a>
-
-    <a href="especialidades.html">Especialidades</a>
-
-    <a href="medicos.html">Médicos</a>
-
-    <a href="pacientes.html">Pacientes</a>
-
-    <a href="horarios.html">Horarios</a>
-
-    <a href="citas.html">Citas</a>
-
-    <a href="cambiar-clave.html">Cambiar contraseña</a>
-
-    <a href="#" onclick="cerrarSesion()">
-        Cerrar sesión
-    </a>
-
+<div id="appNavbar">
 </div>
 
 
-<div class="contenido">
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
 
-    <h2>Nueva especialidad</h2>
-
-    <input
-            type="hidden"
-            id="idEspecialidad">
-
-    <label>Nombre</label>
-
-    <input
-            type="text"
-            id="nombre">
-
-    <label>Estado</label>
-
-    <select id="estado">
-
-        <option value="true">
-            Activo
-        </option>
-
-        <option value="false">
-            Inactivo
-        </option>
-
-    </select>
+<main class="contenido">
 
 
-    <button onclick="guardar()">
-        Guardar
-    </button>
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
 
-    <hr>
+    <div class="pagina-encabezado">
+
+        <div>
+
+            <h2>
+                Especialidades
+            </h2>
+
+            <p>
+                Registra y administra las
+                especialidades médicas de Makanitos.
+            </p>
+
+        </div>
+
+    </div>
 
 
-    <h2>Especialidades registradas</h2>
+    <!-- ======================================
+         FORMULARIO
+         ====================================== -->
 
-    <table>
+    <section class="formulario-seccion">
 
-        <thead>
+        <h3>
+            Registrar / Editar especialidad
+        </h3>
 
-        <tr>
 
-            <th>ID</th>
+        <input
+                type="hidden"
+                id="idEspecialidad">
 
-            <th>Nombre</th>
 
-            <th>Estado</th>
+        <div class="form-grid">
 
-            <th>Acciones</th>
 
-        </tr>
+            <!-- NOMBRE -->
 
-        </thead>
+            <div class="form-grupo">
 
-        <tbody id="tablaEspecialidades">
-        </tbody>
+                <label for="nombre">
+                    Nombre
+                </label>
 
-    </table>
+                <input
+                        type="text"
+                        id="nombre"
+                        placeholder="Ej. Cardiología">
 
-</div>
+            </div>
 
+
+            <!-- DURACIÓN -->
+
+            <div class="form-grupo">
+
+                <label for="tiempoAtencionMinutos">
+                    Duración de la consulta
+                </label>
+
+                <select id="tiempoAtencionMinutos">
+
+                    <option value="">
+                        Seleccione duración
+                    </option>
+
+                    <option value="30">
+                        30 minutos
+                    </option>
+
+                    <option value="60">
+                        1 hora
+                    </option>
+
+                </select>
+
+                <small class="texto-ayuda">
+                    Seleccione una duración de 30 minutos o 1 hora.
+                </small>
+
+            </div>
+
+
+            <!-- COSTO -->
+
+            <div class="form-grupo">
+
+                <label for="costoConsulta">
+                    Costo de consulta
+                </label>
+
+                <input
+                        type="number"
+                        id="costoConsulta"
+                        min="0.01"
+                        max="999999.99"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="Ej. 100.00">
+
+                <small class="texto-ayuda">
+                    Importe en soles.
+                    Máximo permitido: S/ 999999.99.
+                </small>
+
+            </div>
+
+
+            <!-- ESTADO -->
+
+            <div class="form-grupo">
+
+                <label for="estado">
+                    Estado
+                </label>
+
+                <select id="estado">
+
+                    <option value="true">
+                        Activo
+                    </option>
+
+                    <option value="false">
+                        Inactivo
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================
+             ACCIONES
+             ================================== -->
+
+        <div class="form-acciones">
+
+            <button
+                    type="button"
+                    onclick="guardar()">
+
+                Guardar
+
+            </button>
+
+
+            <button
+                    type="button"
+                    class="btn-secundario"
+                    onclick="limpiar()">
+
+                Nuevo
+
+            </button>
+
+        </div>
+
+
+        <!-- ==================================
+             MENSAJE
+             ================================== -->
+
+        <p
+                id="mensaje"
+                class="mensaje-formulario">
+        </p>
+
+
+    </section>
+
+
+    <!-- ======================================
+         LISTADO
+         ====================================== -->
+
+    <section class="tabla-seccion">
+
+        <div class="tabla-encabezado">
+
+            <div>
+
+                <h3>
+                    Especialidades registradas
+                </h3>
+
+                <p>
+                    Lista de especialidades
+                    disponibles en el sistema.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Nombre
+                    </th>
+
+                    <th>
+                        Duración
+                    </th>
+
+                    <th>
+                        Costo
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                    <th>
+                        Acciones
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="tablaEspecialidades">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
 
 <script src="js/sesion.js"></script>
+
+
 <script>
-    protegerAdmin();
+
+    protegerPersonalClinica();
+
 </script>
+
+
+<script src="js/navbar.js"></script>
+
 <script src="js/especialidades.js"></script>
 
 

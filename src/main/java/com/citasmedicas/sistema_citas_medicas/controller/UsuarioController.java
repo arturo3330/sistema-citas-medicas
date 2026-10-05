@@ -21,6 +21,10 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
+    // ==========================
+    // LOGIN
+    // ==========================
+
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @RequestBody LoginRequest request) {
@@ -37,6 +41,10 @@ public class UsuarioController {
                                 .body("Usuario o contraseña incorrectos")
                 );
     }
+
+    // ==========================
+    // CAMBIO DE CLAVE
+    // ==========================
 
     @PutMapping("/cambiar-clave")
     public ResponseEntity<?> cambiarClave(
@@ -75,16 +83,33 @@ public class UsuarioController {
     public ResponseEntity<?> buscar(
             @PathVariable Long id) {
 
-        return usuarioService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return usuarioService
+                .buscarPorId(id)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() ->
+                        ResponseEntity
+                                .notFound()
+                                .build()
+                );
     }
 
     @PostMapping
-    public Usuario guardar(
+    public ResponseEntity<?> guardar(
             @RequestBody Usuario usuario) {
 
-        return usuarioService.guardar(usuario);
+        try {
+
+            Usuario nuevo =
+                    usuarioService.guardar(usuario);
+
+            return ResponseEntity.ok(nuevo);
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
@@ -92,29 +117,43 @@ public class UsuarioController {
             @PathVariable Long id,
             @RequestBody Usuario usuario) {
 
-        if (usuarioService.buscarPorId(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
+        try {
+
+            Usuario actualizado =
+                    usuarioService.actualizar(
+                            id,
+                            usuario
+                    );
+
+            return ResponseEntity.ok(
+                    actualizado
+            );
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
         }
-
-        usuario.setIdUsuario(id);
-
-        return ResponseEntity.ok(
-                usuarioService.guardar(usuario)
-        );
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(
             @PathVariable Long id) {
 
-        if (usuarioService.buscarPorId(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
+        try {
+
+            usuarioService.eliminar(id);
+
+            return ResponseEntity.ok(
+                    "Usuario eliminado correctamente"
+            );
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
         }
-
-        usuarioService.eliminar(id);
-
-        return ResponseEntity.ok(
-                "Usuario eliminado"
-        );
     }
 }

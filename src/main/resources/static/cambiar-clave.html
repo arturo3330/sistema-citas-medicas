@@ -5,8 +5,12 @@
 
     <meta charset="UTF-8">
 
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
     <title>
-        Cambiar contraseña
+        Cambiar contraseña | Makanitos
     </title>
 
     <link
@@ -15,113 +19,187 @@
 
 </head>
 
-
 <body>
 
 
-<header>
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
 
-    <h1>
-        Cambiar contraseña
-    </h1>
-
-</header>
-
-
-<div class="menu">
-
-    <a href="dashboard.html">
-        Inicio
-    </a>
-
-    <a href="especialidades.html">
-        Especialidades
-    </a>
-
-    <a href="medicos.html">
-        Médicos
-    </a>
-
-    <a href="pacientes.html">
-        Pacientes
-    </a>
-
-    <a href="horarios.html">
-        Horarios
-    </a>
-
-    <a href="citas.html">
-        Citas
-    </a>
-
-    <a
-            href="#"
-            onclick="cerrarSesion()">
-
-        Cerrar sesión
-
-    </a>
-
+<div id="appNavbar">
 </div>
 
 
-<div class="contenido">
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
 
-    <h2>
-        Actualizar contraseña
-    </h2>
-
-
-    <div class="card">
-
-        <p>
-            Usuario:
-            <strong id="usuarioActual"></strong>
-        </p>
+<main class="contenido cuenta-contenido">
 
 
-        <label>
-            Contraseña actual
-        </label>
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
 
-        <input
-                type="password"
-                id="claveActual">
+    <div class="pagina-encabezado">
 
+        <div>
 
-        <label>
-            Nueva contraseña
-        </label>
+            <h2>
+                Cambiar contraseña
+            </h2>
 
-        <input
-                type="password"
-                id="claveNueva">
+            <p>
+                Actualiza la contraseña de acceso
+                de tu cuenta.
+            </p>
 
-
-        <label>
-            Confirmar nueva contraseña
-        </label>
-
-        <input
-                type="password"
-                id="confirmarClave">
-
-
-        <button onclick="cambiarClave()">
-
-            Cambiar contraseña
-
-        </button>
-
-
-        <p id="mensaje"></p>
+        </div>
 
     </div>
 
-</div>
 
+    <!-- ======================================
+         SEGURIDAD
+         ====================================== -->
+
+    <section class="formulario-seccion seguridad-clave">
+
+
+        <div class="seguridad-clave-encabezado">
+
+            <div class="seguridad-clave-icono">
+                🔒
+            </div>
+
+            <div>
+
+                <h3>
+                    Seguridad de la cuenta
+                </h3>
+
+                <p>
+                    Elige una nueva contraseña
+                    diferente a la actual.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             USUARIO
+             ================================== -->
+
+        <div class="usuario-seguridad">
+
+            <span>
+                Usuario
+            </span>
+
+            <strong id="usuarioActual">
+                -
+            </strong>
+
+        </div>
+
+
+        <!-- ==================================
+             FORMULARIO
+             ================================== -->
+
+        <div class="form-grid clave-grid">
+
+
+            <div class="form-grupo form-columna-completa">
+
+                <label for="claveActual">
+                    Contraseña actual
+                </label>
+
+                <input
+                        type="password"
+                        id="claveActual"
+                        autocomplete="current-password"
+                        placeholder="Ingrese su contraseña actual">
+
+            </div>
+
+
+            <div class="form-grupo">
+
+                <label for="claveNueva">
+                    Nueva contraseña
+                </label>
+
+                <input
+                        type="password"
+                        id="claveNueva"
+                        autocomplete="new-password"
+                        placeholder="Ingrese la nueva contraseña">
+
+            </div>
+
+
+            <div class="form-grupo">
+
+                <label for="confirmarClave">
+                    Confirmar nueva contraseña
+                </label>
+
+                <input
+                        type="password"
+                        id="confirmarClave"
+                        autocomplete="new-password"
+                        placeholder="Repita la nueva contraseña">
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================
+             ACCIONES
+             ================================== -->
+
+        <div class="form-acciones">
+
+            <button
+                    type="button"
+                    onclick="cambiarClave()">
+
+                Cambiar contraseña
+
+            </button>
+
+        </div>
+
+
+        <!-- ==================================
+             MENSAJE
+             ================================== -->
+
+        <p
+                id="mensaje"
+                class="mensaje-formulario">
+        </p>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
 
 <script src="js/sesion.js"></script>
+
+<script src="js/navbar.js"></script>
 
 <script src="js/cambiar-clave.js"></script>
 

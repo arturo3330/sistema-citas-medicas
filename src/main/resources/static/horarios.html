@@ -5,8 +5,12 @@
 
     <meta charset="UTF-8">
 
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
     <title>
-        Horarios
+        Horarios | Makanitos
     </title>
 
     <link
@@ -15,171 +19,304 @@
 
 </head>
 
-
 <body>
 
 
-<header>
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
 
-    <h1>
-        Mantenimiento de Horarios
-    </h1>
-
-</header>
-
-
-<div class="menu">
-
-    <a href="dashboard.html">
-        Inicio
-    </a>
-
-    <a href="especialidades.html">
-        Especialidades
-    </a>
-
-    <a href="medicos.html">
-        Médicos
-    </a>
-
-    <a href="pacientes.html">
-        Pacientes
-    </a>
-
-    <a href="horarios.html">
-        Horarios
-    </a>
-
-    <a href="citas.html">
-        Citas
-    </a>
-
-    <a href="cambiar-clave.html">
-        Cambiar contraseña
-    </a>
-
-    <a
-            href="#"
-            onclick="cerrarSesion()">
-
-        Cerrar sesión
-
-    </a>
-
+<div id="appNavbar">
 </div>
 
 
-<div class="contenido">
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
 
-    <h2>
-        Registrar horario
-    </h2>
-
-
-    <input
-            type="hidden"
-            id="idHorario">
+<main class="contenido">
 
 
-    <label>
-        Médico
-    </label>
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
 
-    <select id="medico">
-    </select>
+    <div class="pagina-encabezado">
 
+        <div>
 
-    <label>
-        Fecha
-    </label>
+            <h2>
+                Horarios
+            </h2>
 
-    <input
-            type="date"
-            id="fecha">
+            <p>
+                Registra y administra los horarios
+                disponibles para la atención médica.
+            </p>
 
+        </div>
 
-    <label>
-        Hora
-    </label>
-
-    <input
-            type="time"
-            id="hora">
+    </div>
 
 
-    <label>
-        Estado
-    </label>
+    <!-- ======================================
+         FORMULARIO
+         ====================================== -->
 
-    <select id="estado">
+    <section class="formulario-seccion">
 
-        <option value="DISPONIBLE">
-            Disponible
-        </option>
-
-        <option value="RESERVADO">
-            Reservado
-        </option>
-
-        <option value="CANCELADO">
-            Cancelado
-        </option>
-
-    </select>
+        <h3>
+            Registrar / Editar horario
+        </h3>
 
 
-    <button onclick="guardar()">
-
-        Guardar
-
-    </button>
+        <input
+                type="hidden"
+                id="idHorario">
 
 
-    <hr>
+        <div class="form-grid">
 
 
-    <h2>
-        Horarios registrados
-    </h2>
+            <!-- MÉDICO -->
+
+            <div class="form-grupo">
+
+                <label for="medico">
+                    Médico
+                </label>
+
+                <select id="medico">
+
+                    <option value="">
+                        Seleccione un médico
+                    </option>
+
+                </select>
+
+            </div>
 
 
-    <table>
+            <!-- FECHA -->
 
-        <thead>
+            <div class="form-grupo">
 
-        <tr>
+                <label for="fecha">
+                    Fecha
+                </label>
 
-            <th>ID</th>
+                <input
+                        type="date"
+                        id="fecha">
 
-            <th>Médico</th>
-
-            <th>Especialidad</th>
-
-            <th>Fecha</th>
-
-            <th>Hora</th>
-
-            <th>Estado</th>
-
-            <th>Acciones</th>
-
-        </tr>
-
-        </thead>
+            </div>
 
 
-        <tbody id="tablaHorarios">
-        </tbody>
+            <!-- HORA -->
 
-    </table>
+            <div class="form-grupo">
 
-</div>
+                <label for="hora">
+                    Hora de inicio
+                </label>
 
+                <input
+                        type="time"
+                        id="hora">
+
+            </div>
+
+
+            <!-- ESTADO -->
+
+            <div class="form-grupo">
+
+                <label for="estado">
+                    Estado
+                </label>
+
+                <select id="estado">
+
+                    <option value="DISPONIBLE">
+                        Disponible
+                    </option>
+
+                    <option value="RESERVADO">
+                        Reservado
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==================================
+             INFORMACIÓN DEL HORARIO
+             ================================== -->
+
+        <div class="info-horario">
+
+            <div class="info-horario-icono">
+                🕒
+            </div>
+
+            <div>
+
+                <strong>
+                    Horario de atención
+                </strong>
+
+                <p id="infoPoliticaHorario">
+
+                    Los horarios deben respetar
+                    la política vigente de la clínica.
+
+                    La hora final se calcula
+                    automáticamente según la
+                    duración de la especialidad.
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             ACCIONES
+             ================================== -->
+
+        <div class="form-acciones">
+
+            <button
+                    type="button"
+                    onclick="guardar()">
+
+                Guardar
+
+            </button>
+
+
+            <button
+                    type="button"
+                    class="btn-secundario"
+                    onclick="limpiar()">
+
+                Nuevo
+
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ======================================
+         LISTADO
+         ====================================== -->
+
+    <section class="tabla-seccion">
+
+        <div class="tabla-encabezado">
+
+            <div>
+
+                <h3>
+                    Horarios registrados
+                </h3>
+
+                <p>
+                    Consulta los horarios creados
+                    para los médicos.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabla-responsive">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Médico
+                    </th>
+
+                    <th>
+                        Especialidad
+                    </th>
+
+                    <th>
+                        Fecha
+                    </th>
+
+                    <th>
+                        Hora inicio
+                    </th>
+
+                    <th>
+                        Hora fin
+                    </th>
+
+                    <th>
+                        Día
+                    </th>
+
+                    <th>
+                        Estado
+                    </th>
+
+                    <th>
+                        Acciones
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="tablaHorarios">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
 
 <script src="js/sesion.js"></script>
+
+
 <script>
-    protegerAdmin();
+
+    protegerPersonalClinica();
+
 </script>
+
+
+<script src="js/navbar.js"></script>
+
 <script src="js/horarios.js"></script>
 
 

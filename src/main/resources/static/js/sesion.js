@@ -35,6 +35,13 @@ function esAdmin() {
 }
 
 
+function esSecretaria() {
+
+    return usuarioSesion &&
+        usuarioSesion.rol === "SECRETARIA";
+}
+
+
 function esPaciente() {
 
     return usuarioSesion &&
@@ -42,9 +49,36 @@ function esPaciente() {
 }
 
 
+function esPersonalClinica() {
+
+    return esAdmin() ||
+        esSecretaria();
+}
+
+
 function protegerAdmin() {
 
     if (!esAdmin()) {
+
+        window.location.href =
+            "dashboard.html";
+    }
+}
+
+
+function protegerPersonalClinica() {
+
+    if (!esPersonalClinica()) {
+
+        window.location.href =
+            "dashboard.html";
+    }
+}
+
+
+function protegerPaciente() {
+
+    if (!esPaciente()) {
 
         window.location.href =
             "dashboard.html";

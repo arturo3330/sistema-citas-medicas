@@ -5,8 +5,12 @@
 
     <meta charset="UTF-8">
 
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
     <title>
-        Reservar cita
+        Reservar cita | Makanitos
     </title>
 
     <link
@@ -15,84 +19,579 @@
 
 </head>
 
-
 <body>
 
 
-<header>
+<!-- ==========================================
+     NAVBAR GLOBAL MAKANITOS
+     ========================================== -->
 
-    <h1>
-        Reservar Cita Médica
-    </h1>
-
-</header>
-
-
-<div class="menu">
-
-    <a href="dashboard.html">
-        Inicio
-    </a>
-
-    <a href="reservar-cita.html">
-        Reservar cita
-    </a>
-
-    <a href="mis-citas.html">
-        Mis citas
-    </a>
-
-    <a href="cambiar-clave.html">
-        Cambiar contraseña
-    </a>
-
-    <a
-            href="#"
-            onclick="cerrarSesion()">
-
-        Cerrar sesión
-
-    </a>
-
+<div id="appNavbar">
 </div>
 
 
-<div class="contenido">
+<!-- ==========================================
+     CONTENIDO PRINCIPAL
+     ========================================== -->
 
-    <h2>
-        Nueva cita
-    </h2>
-
-
-    <p>
-        Paciente:
-        <strong id="nombrePaciente">
-        </strong>
-    </p>
+<main class="contenido reserva-contenido">
 
 
-    <label>
-        Horario disponible
-    </label>
+    <!-- ======================================
+         ENCABEZADO
+         ====================================== -->
 
-    <select id="horario">
-    </select>
+    <div class="pagina-encabezado">
+
+        <div>
+
+            <h2>
+                Reservar cita
+            </h2>
+
+            <p>
+                Encuentra una especialidad,
+                selecciona un médico,
+                elige un horario disponible
+                y registra el pago inicial.
+            </p>
+
+        </div>
+
+    </div>
 
 
-    <button onclick="reservar()">
+    <!-- ======================================
+         PACIENTE
+         ====================================== -->
 
-        Reservar cita
+    <section class="reserva-paciente">
 
-    </button>
+        <div class="reserva-paciente-icono">
+            👤
+        </div>
+
+        <div>
+
+            <span>
+                Paciente
+            </span>
+
+            <strong id="nombrePaciente">
+                -
+            </strong>
+
+        </div>
+
+    </section>
 
 
-    <p id="mensaje">
-    </p>
+    <!-- ======================================
+         FORMULARIO DE RESERVA
+         ====================================== -->
 
-</div>
+    <section class="formulario-seccion">
 
+        <div class="reserva-encabezado">
+
+            <div>
+
+                <h3>
+                    Nueva cita
+                </h3>
+
+                <p>
+                    Completa los siguientes pasos
+                    para reservar tu cita.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             PASO 1
+             ================================== -->
+
+        <div class="reserva-paso">
+
+            <div class="reserva-numero">
+                1
+            </div>
+
+
+            <div class="reserva-paso-contenido">
+
+                <label for="especialidad">
+                    Especialidad
+                </label>
+
+                <select
+                        id="especialidad"
+                        onchange="cambiarEspecialidad()">
+
+                    <option value="">
+                        Seleccione una especialidad
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             PASO 2
+             ================================== -->
+
+        <div class="reserva-paso">
+
+            <div class="reserva-numero">
+                2
+            </div>
+
+
+            <div class="reserva-paso-contenido">
+
+                <label for="medico">
+                    Médico
+                </label>
+
+                <select
+                        id="medico"
+                        onchange="cambiarMedico()"
+                        disabled>
+
+                    <option value="">
+                        Primero seleccione una especialidad
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             PASO 3
+             ================================== -->
+
+        <div class="reserva-paso">
+
+            <div class="reserva-numero">
+                3
+            </div>
+
+
+            <div class="reserva-paso-contenido">
+
+                <label for="fecha">
+                    Fecha
+                </label>
+
+                <select
+                        id="fecha"
+                        onchange="cambiarFecha()"
+                        disabled>
+
+                    <option value="">
+                        Primero seleccione un médico
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             PASO 4
+             ================================== -->
+
+        <div class="reserva-paso">
+
+            <div class="reserva-numero">
+                4
+            </div>
+
+
+            <div class="reserva-paso-contenido">
+
+                <label for="horario">
+                    Horario disponible
+                </label>
+
+                <select
+                        id="horario"
+                        disabled>
+
+                    <option value="">
+                        Primero seleccione una fecha
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             DETALLE DE LA CITA
+             ================================== -->
+
+        <div
+                id="detalleHorario"
+                class="reserva-detalle"
+                style="display:none;">
+
+
+            <div class="reserva-detalle-titulo">
+
+                <div class="reserva-detalle-icono">
+                    📅
+                </div>
+
+                <div>
+
+                    <h3>
+                        Detalle de la cita
+                    </h3>
+
+                    <p>
+                        Revisa los datos antes
+                        de confirmar tu reserva.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="reserva-detalle-grid">
+
+
+                <div class="reserva-detalle-item">
+
+                    <span>
+                        Especialidad
+                    </span>
+
+                    <strong id="detalleEspecialidad">
+                    </strong>
+
+                </div>
+
+
+                <div class="reserva-detalle-item">
+
+                    <span>
+                        Médico
+                    </span>
+
+                    <strong id="detalleMedico">
+                    </strong>
+
+                </div>
+
+
+                <div class="reserva-detalle-item">
+
+                    <span>
+                        Fecha
+                    </span>
+
+                    <strong id="detalleFecha">
+                    </strong>
+
+                </div>
+
+
+                <div class="reserva-detalle-item">
+
+                    <span>
+                        Hora
+                    </span>
+
+                    <strong id="detalleHora">
+                    </strong>
+
+                </div>
+
+
+                <div class="reserva-detalle-item">
+
+                    <span>
+                        Duración
+                    </span>
+
+                    <strong>
+
+                        <span id="detalleDuracion">
+                        </span>
+
+                        min
+
+                    </strong>
+
+                </div>
+
+
+                <div class="reserva-detalle-item reserva-detalle-costo">
+
+                    <span>
+                        Costo total
+                    </span>
+
+                    <strong>
+
+                        S/
+                        <span id="detalleCosto">
+                        </span>
+
+                    </strong>
+
+                </div>
+
+
+                <div class="reserva-detalle-item">
+
+                    <span>
+                        Pago mínimo requerido
+                    </span>
+
+                    <strong>
+
+                        S/
+                        <span id="detallePagoMinimo">
+                            0.00
+                        </span>
+
+                    </strong>
+
+                </div>
+
+
+                <div class="reserva-detalle-item">
+
+                    <span>
+                        Política de pago
+                    </span>
+
+                    <strong>
+
+                        <span id="detallePorcentajePago">
+                            0
+                        </span>
+
+                        %
+
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             PASO 5 - PAGO
+             ================================== -->
+
+        <div
+                id="seccionPagoReserva"
+                class="reserva-paso"
+                style="display:none;">
+
+            <div class="reserva-numero">
+                5
+            </div>
+
+
+            <div class="reserva-paso-contenido">
+
+                <h3>
+                    Pago inicial
+                </h3>
+
+
+                <p>
+                    Para separar la cita debes realizar
+                    como mínimo el porcentaje establecido
+                    por la política de la clínica.
+                </p>
+
+
+                <!-- MONTO -->
+
+                <div class="form-grupo">
+
+                    <label for="montoPago">
+                        Monto a pagar
+                    </label>
+
+                    <input
+                            type="number"
+                            id="montoPago"
+                            min="0.01"
+                            max="999999.99"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="0.00">
+
+                    <small class="texto-ayuda">
+
+                        Mínimo requerido:
+                        S/
+                        <span id="textoPagoMinimo">
+                            0.00
+                        </span>
+
+                    </small>
+
+                </div>
+
+
+                <!-- MÉTODO -->
+
+                <div class="form-grupo">
+
+                    <label for="metodoPago">
+                        Método de pago
+                    </label>
+
+                    <select id="metodoPago">
+
+                        <option value="">
+                            Seleccione un método
+                        </option>
+
+                        <option value="EFECTIVO">
+                            Efectivo
+                        </option>
+
+                        <option value="YAPE">
+                            Yape
+                        </option>
+
+                        <option value="PLIN">
+                            Plin
+                        </option>
+
+                        <option value="TRANSFERENCIA">
+                            Transferencia
+                        </option>
+
+                        <option value="TARJETA">
+                            Tarjeta
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- NÚMERO OPERACIÓN -->
+
+                <div class="form-grupo">
+
+                    <label for="numeroOperacion">
+                        Número de operación
+                    </label>
+
+                    <input
+                            type="text"
+                            id="numeroOperacion"
+                            maxlength="3"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            oninput="
+                                this.value =
+                                this.value
+                                    .replace(/[^0-9]/g, '')
+                                    .slice(0, 3)
+                            "
+                            placeholder="Ej. 123">
+
+                    <small class="texto-ayuda">
+                        Solo números.
+                        Máximo 3 cifras.
+                    </small>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             ACCIONES
+             ================================== -->
+
+        <div class="form-acciones reserva-acciones">
+
+            <button
+                    type="button"
+                    id="btnReservar"
+                    onclick="reservar()"
+                    disabled>
+
+                Confirmar reserva y pago
+
+            </button>
+
+
+            <button
+                    type="button"
+                    class="btn-secundario"
+                    onclick="limpiarReserva()">
+
+                Limpiar
+
+            </button>
+
+        </div>
+
+
+        <!-- ==================================
+             MENSAJE
+             ================================== -->
+
+        <p
+                id="mensaje"
+                class="mensaje-formulario">
+        </p>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- ==========================================
+     SCRIPTS
+     ========================================== -->
 
 <script src="js/sesion.js"></script>
+
+
+<script>
+
+    protegerPaciente();
+
+</script>
+
+
+<script src="js/navbar.js"></script>
 
 <script src="js/reservar-cita.js"></script>
 

@@ -1,109 +1,397 @@
 async function listar() {
 
-    const respuesta = await fetch("/pacientes");
-    const datos = await respuesta.json();
+    try {
 
-    const tabla = document.getElementById("tablaPacientes");
+        const respuesta =
+            await fetch(
+                "/pacientes"
+            );
 
-    tabla.innerHTML = "";
 
-    datos.forEach(p => {
+        if (!respuesta.ok) {
 
-        tabla.innerHTML += `
-            <tr>
-                <td>${p.idPaciente}</td>
-                <td>${p.dni}</td>
-                <td>${p.nombre}</td>
-                <td>${p.telefono ?? ""}</td>
-                <td>${p.correo ?? ""}</td>
+            throw new Error(
+                "No se pudieron cargar los pacientes"
+            );
+        }
 
-                <td>
-                    <button onclick="editar(
-                        ${p.idPaciente},
-                        '${p.dni}',
-                        '${p.nombre}',
-                        '${p.telefono ?? ""}',
-                        '${p.correo ?? ""}'
-                    )">
-                        Editar
-                    </button>
 
-                    <button onclick="eliminar(${p.idPaciente})">
-                        Eliminar
-                    </button>
-                </td>
-            </tr>
-        `;
-    });
+        const datos =
+            await respuesta.json();
+
+
+        const tabla =
+            document.getElementById(
+                "tablaPacientes"
+            );
+
+
+        tabla.innerHTML =
+            "";
+
+
+        datos.forEach(p => {
+
+            tabla.innerHTML += `
+                <tr>
+
+                    <td>
+                        ${p.idPaciente}
+                    </td>
+
+                    <td>
+                        ${p.dni}
+                    </td>
+
+                    <td>
+                        ${p.nombre}
+                    </td>
+
+                    <td>
+                        ${p.telefono ?? ""}
+                    </td>
+
+                    <td>
+                        ${p.correo ?? ""}
+                    </td>
+
+                    <td>
+
+                        <button
+                            onclick="editar(
+                                ${p.idPaciente},
+                                '${p.dni}',
+                                '${p.nombre}',
+                                '${p.telefono ?? ""}',
+                                '${p.correo ?? ""}'
+                            )">
+
+                            Editar
+
+                        </button>
+
+
+                        <button
+                            onclick="eliminar(
+                                ${p.idPaciente}
+                            )">
+
+                            Eliminar
+
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            "No se pudieron cargar los pacientes"
+        );
+    }
 }
 
+
+// ==========================================
+// GUARDAR / ACTUALIZAR
+// ==========================================
 
 async function guardar() {
 
     const id =
-        document.getElementById("idPaciente").value;
+        document.getElementById(
+            "idPaciente"
+        ).value;
+
 
     const dni =
-        document.getElementById("dni").value.trim();
+        document.getElementById(
+            "dni"
+        ).value.trim();
+
 
     const nombre =
-        document.getElementById("nombre").value.trim();
+        document.getElementById(
+            "nombre"
+        ).value.trim();
+
 
     const telefono =
-        document.getElementById("telefono").value.trim();
+        document.getElementById(
+            "telefono"
+        ).value.trim();
+
 
     const correo =
-        document.getElementById("correo").value.trim();
+        document.getElementById(
+            "correo"
+        ).value.trim();
 
-    if (dni === "" || nombre === "") {
-        alert("DNI y nombre son obligatorios");
+
+    // ======================================
+    // CAMPOS OBLIGATORIOS
+    // ======================================
+
+    if (
+        dni === ""
+        ||
+        nombre === ""
+    ) {
+
+        alert(
+            "DNI y nombre son obligatorios"
+        );
+
         return;
     }
 
-    if (dni.length !== 8) {
-        alert("El DNI debe tener 8 dígitos");
+
+    // ======================================
+    // VALIDAR DNI
+    // ======================================
+
+    if (
+        !/^\d+$/.test(
+            dni
+        )
+    ) {
+
+        alert(
+            "El DNI solo puede contener números"
+        );
+
         return;
     }
+
+
+    if (
+        dni.length !== 8
+    ) {
+
+        alert(
+            "El DNI debe tener exactamente 8 dígitos"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // VALIDAR TELÉFONO
+    // ======================================
+
+    if (
+        telefono !== ""
+        &&
+        !/^\d+$/.test(
+            telefono
+        )
+    ) {
+
+        alert(
+            "El teléfono solo puede contener números"
+        );
+
+        return;
+    }
+
+
+    if (
+        telefono.length > 10
+    ) {
+
+        alert(
+            "El teléfono debe tener como máximo 10 dígitos"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // VALIDAR CORREO
+    // ======================================
+
+    if (
+        correo !== ""
+        &&
+        !validarCorreo(
+            correo
+        )
+    ) {
+
+        alert(
+            "Ingrese un correo electrónico válido"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // CONSTRUIR DATOS
+    // ======================================
 
     const datos = {
-        dni: dni,
-        nombre: nombre,
-        telefono: telefono,
-        correo: correo
+
+        dni:
+        dni,
+
+        nombre:
+        nombre,
+
+        telefono:
+        telefono,
+
+        correo:
+        correo
     };
 
-    let respuesta;
 
-    if (id === "") {
+    try {
 
-        respuesta = await fetch("/pacientes", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(datos)
-        });
+        let respuesta;
 
-    } else {
 
-        respuesta = await fetch("/pacientes/" + id, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(datos)
-        });
+        // ==================================
+        // NUEVO PACIENTE
+        // ==================================
+
+        if (
+            id === ""
+        ) {
+
+            respuesta =
+                await fetch(
+                    "/pacientes",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                datos
+                            )
+                    }
+                );
+
+        }
+
+
+            // ==================================
+            // ACTUALIZAR PACIENTE
+        // ==================================
+
+        else {
+
+            respuesta =
+                await fetch(
+                    "/pacientes/" + id,
+                    {
+
+                        method:
+                            "PUT",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                datos
+                            )
+                    }
+                );
+        }
+
+
+        // ==================================
+        // ERROR DEL BACKEND
+        // ==================================
+
+        if (
+            !respuesta.ok
+        ) {
+
+            const mensaje =
+                await respuesta.text();
+
+
+            alert(
+                mensaje
+                ||
+                "No se pudo guardar el paciente"
+            );
+
+            return;
+        }
+
+
+        alert(
+            id === ""
+                ? "Paciente registrado correctamente"
+                : "Paciente actualizado correctamente"
+        );
+
+
+        limpiar();
+
+        await listar();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            "No se pudo conectar con el servidor"
+        );
     }
-
-    if (!respuesta.ok) {
-        alert("No se pudo guardar el paciente");
-        return;
-    }
-
-    limpiar();
-    listar();
 }
 
+
+// ==========================================
+// VALIDAR CORREO
+// ==========================================
+
+function validarCorreo(
+    correo
+) {
+
+    const patron =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+    return patron.test(
+        correo
+    );
+}
+
+
+// ==========================================
+// EDITAR
+// ==========================================
 
 function editar(
     id,
@@ -113,47 +401,163 @@ function editar(
     correo
 ) {
 
-    document.getElementById("idPaciente").value = id;
-    document.getElementById("dni").value = dni;
-    document.getElementById("nombre").value = nombre;
-    document.getElementById("telefono").value = telefono;
-    document.getElementById("correo").value = correo;
+    document.getElementById(
+        "idPaciente"
+    ).value =
+        id;
+
+
+    document.getElementById(
+        "dni"
+    ).value =
+        dni;
+
+
+    document.getElementById(
+        "nombre"
+    ).value =
+        nombre;
+
+
+    document.getElementById(
+        "telefono"
+    ).value =
+        telefono;
+
+
+    document.getElementById(
+        "correo"
+    ).value =
+        correo;
+
+
+    /*
+     * Opcional:
+     * mueve la pantalla hacia
+     * el formulario al editar.
+     */
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 
-async function eliminar(id) {
+// ==========================================
+// ELIMINAR
+// ==========================================
+
+async function eliminar(
+    id
+) {
 
     const confirmar =
-        confirm("¿Desea eliminar el paciente?");
+        confirm(
+            "¿Desea eliminar el paciente?"
+        );
 
-    if (!confirmar) {
+
+    if (
+        !confirmar
+    ) {
+
         return;
     }
 
-    const respuesta = await fetch(
-        "/pacientes/" + id,
-        {
-            method: "DELETE"
+
+    try {
+
+        const respuesta =
+            await fetch(
+                "/pacientes/" + id,
+                {
+
+                    method:
+                        "DELETE"
+                }
+            );
+
+
+        if (
+            !respuesta.ok
+        ) {
+
+            const mensaje =
+                await respuesta.text();
+
+
+            alert(
+                mensaje
+                ||
+                "No se pudo eliminar el paciente"
+            );
+
+            return;
         }
-    );
 
-    if (!respuesta.ok) {
-        alert("No se pudo eliminar el paciente");
-        return;
+
+        alert(
+            "Paciente eliminado correctamente"
+        );
+
+
+        await listar();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            "No se pudo conectar con el servidor"
+        );
     }
-
-    listar();
 }
 
+
+// ==========================================
+// LIMPIAR
+// ==========================================
 
 function limpiar() {
 
-    document.getElementById("idPaciente").value = "";
-    document.getElementById("dni").value = "";
-    document.getElementById("nombre").value = "";
-    document.getElementById("telefono").value = "";
-    document.getElementById("correo").value = "";
+    document.getElementById(
+        "idPaciente"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "dni"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "nombre"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "telefono"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "correo"
+    ).value =
+        "";
 }
 
+
+// ==========================================
+// INICIO
+// ==========================================
 
 listar();

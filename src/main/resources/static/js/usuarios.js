@@ -1,113 +1,278 @@
-async function cargarPacientes() {
+// Solo ADMIN y SECRETARIA pueden entrar a esta página
+protegerPersonalClinica();
 
-    const respuesta =
-        await fetch("/pacientes");
 
-    const datos =
-        await respuesta.json();
+// ==========================================
+// CONFIGURACIÓN DE ROLES DEL FORMULARIO
+// ==========================================
+
+function configurarRolesFormulario(rolActual = null) {
 
     const select =
-        document.getElementById("paciente");
+        document.getElementById("rol");
 
-    select.innerHTML =
-        '<option value="">Seleccione paciente</option>';
+    /*
+     * Desde el formulario normal solo se pueden
+     * crear PACIENTES y SECRETARIAS.
+     */
+    select.innerHTML = `
+        <option value="PACIENTE">Paciente</option>
+        <option value="SECRETARIA">Secretaria</option>
+    `;
 
-    datos.forEach(p => {
+    /*
+     * Si estamos editando al ADMIN,
+     * agregamos temporalmente su opción
+     * y bloqueamos el cambio de rol.
+     */
+    if (rolActual === "ADMIN") {
 
         select.innerHTML += `
-            <option value="${p.idPaciente}">
-                ${p.nombre} - DNI: ${p.dni}
+            <option value="ADMIN">
+                Administrador
             </option>
         `;
-    });
+
+        select.value = "ADMIN";
+        select.disabled = true;
+
+    } else {
+
+        select.disabled = false;
+
+        if (rolActual) {
+            select.value = rolActual;
+        } else {
+            select.value = "PACIENTE";
+        }
+    }
 }
 
+
+// ==========================================
+// CARGAR PACIENTES
+// ==========================================
+
+async function cargarPacientes() {
+
+    try {
+
+        const respuesta =
+            await fetch("/pacientes");
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No se pudieron cargar los pacientes"
+            );
+        }
+
+        const datos =
+            await respuesta.json();
+
+        const select =
+            document.getElementById("paciente");
+
+        select.innerHTML =
+            '<option value="">Seleccione paciente</option>';
+
+        datos.forEach(p => {
+
+            select.innerHTML += `
+                <option value="${p.idPaciente}">
+                    ${p.nombre} - DNI: ${p.dni}
+                </option>
+            `;
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "No se pudieron cargar los pacientes"
+        );
+    }
+}
+
+
+// ==========================================
+// LISTAR USUARIOS
+// ==========================================
 
 async function listar() {
 
-    const respuesta =
-        await fetch("/usuarios");
+    try {
 
-    const datos =
-        await respuesta.json();
+        const respuesta =
+            await fetch("/usuarios");
 
-    const tabla =
-        document.getElementById(
-            "tablaUsuarios"
-        );
+        if (!respuesta.ok) {
 
-    tabla.innerHTML = "";
-
-
-    datos.forEach(u => {
-
-        let pacienteNombre = "-";
-
-        let idPaciente = "";
-
-        if (u.paciente) {
-
-            pacienteNombre =
-                u.paciente.nombre;
-
-            idPaciente =
-                u.paciente.idPaciente;
+            throw new Error(
+                "No se pudieron cargar los usuarios"
+            );
         }
 
+        const datos =
+            await respuesta.json();
 
-        tabla.innerHTML += `
-            <tr>
+        const tabla =
+            document.getElementById(
+                "tablaUsuarios"
+            );
 
-                <td>
-                    ${u.idUsuario}
-                </td>
+        tabla.innerHTML = "";
 
-                <td>
-                    ${u.username}
-                </td>
+        const usuarioSesion =
+            obtenerUsuarioSesion();
 
-                <td>
-                    ${u.nombre}
-                </td>
+        datos.forEach(u => {
 
-                <td>
-                    ${u.rol}
-                </td>
+            let pacienteNombre = "-";
+            let idPaciente = "";
 
-                <td>
-                    ${pacienteNombre}
-                </td>
+            if (u.paciente) {
 
-                <td>
-                    ${u.estado ? "Activo" : "Inactivo"}
-                </td>
+                pacienteNombre =
+                    u.paciente.nombre;
 
-                <td>
+                idPaciente =
+                    u.paciente.idPaciente;
+            }
 
-                    <button onclick="editar(
-                        ${u.idUsuario},
-                        '${u.username}',
-                        '${u.nombre}',
-                        '${u.rol}',
-                        '${idPaciente}',
-                        ${u.estado}
-                    )">
+
+            // ==================================
+            // BOTÓN EDITAR
+            // ==================================
+
+            let botonEditar = "";
+
+            /*
+             * ADMIN puede editar cualquier usuario.
+             *
+             * SECRETARIA puede editar usuarios,
+             * excepto al ADMIN.
+             */
+            if (
+                usuarioSesion.rol === "ADMIN" ||
+                u.rol !== "ADMIN"
+            ) {
+
+                botonEditar = `
+                    <button
+                        onclick="editar(
+                            ${u.idUsuario},
+                            '${u.username}',
+                            '${u.nombre}',
+                            '${u.rol}',
+                            '${idPaciente}',
+                            ${u.estado}
+                        )"
+                    >
                         Editar
                     </button>
+                `;
+            }
 
-                    <button onclick="eliminar(
-                        ${u.idUsuario}
-                    )">
+
+            // ==================================
+            // BOTÓN ELIMINAR
+            // ==================================
+
+            let botonEliminar = "";
+
+            /*
+             * Ningún ADMIN tendrá botón eliminar.
+             */
+            if (u.rol !== "ADMIN") {
+
+                botonEliminar = `
+                    <button
+                        onclick="eliminar(
+                            ${u.idUsuario}
+                        )"
+                    >
                         Eliminar
                     </button>
+                `;
+            }
 
-                </td>
 
-            </tr>
-        `;
-    });
+            tabla.innerHTML += `
+                <tr>
+
+                    <td>
+                        ${u.idUsuario}
+                    </td>
+
+                    <td>
+                        ${u.username}
+                    </td>
+
+                    <td>
+                        ${u.nombre}
+                    </td>
+
+                    <td>
+                        ${formatearRol(u.rol)}
+                    </td>
+
+                    <td>
+                        ${pacienteNombre}
+                    </td>
+
+                    <td>
+                        ${u.estado
+                ? "Activo"
+                : "Inactivo"}
+                    </td>
+
+                    <td>
+                        ${botonEditar}
+                        ${botonEliminar}
+                    </td>
+
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "No se pudieron cargar los usuarios"
+        );
+    }
 }
 
+
+// ==========================================
+// FORMATEAR ROL
+// ==========================================
+
+function formatearRol(rol) {
+
+    if (rol === "ADMIN") {
+        return "Administrador";
+    }
+
+    if (rol === "SECRETARIA") {
+        return "Secretaria";
+    }
+
+    if (rol === "PACIENTE") {
+        return "Paciente";
+    }
+
+    return rol;
+}
+
+
+// ==========================================
+// GUARDAR / ACTUALIZAR
+// ==========================================
 
 async function guardar() {
 
@@ -146,6 +311,10 @@ async function guardar() {
             "estado"
         ).value === "true";
 
+
+    // ======================================
+    // VALIDACIONES
+    // ======================================
 
     if (
         username === "" ||
@@ -186,11 +355,35 @@ async function guardar() {
     }
 
 
+    /*
+     * No se permite crear ADMIN
+     * desde el formulario.
+     */
+    if (
+        id === "" &&
+        rol === "ADMIN"
+    ) {
+
+        alert(
+            "No se pueden crear administradores desde esta opción"
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // CONSTRUIR JSON
+    // ======================================
+
     const datos = {
 
         username: username,
+
         nombre: nombre,
+
         rol: rol,
+
         estado: estado,
 
         paciente:
@@ -203,91 +396,121 @@ async function guardar() {
     };
 
 
+    /*
+     * Solo enviamos password si realmente
+     * se ingresó una nueva.
+     *
+     * UsuarioService.actualizar()
+     * conserva la contraseña anterior
+     * cuando este campo no viene.
+     */
     if (password !== "") {
-        datos.password = password;
+
+        datos.password =
+            password;
     }
 
 
-    let respuesta;
+    try {
+
+        let respuesta;
 
 
-    if (id === "") {
+        // ==================================
+        // NUEVO USUARIO
+        // ==================================
 
-        respuesta =
-            await fetch(
-                "/usuarios",
-                {
+        if (id === "") {
 
-                    method: "POST",
+            respuesta =
+                await fetch(
+                    "/usuarios",
+                    {
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                        method: "POST",
 
-                    body:
-                        JSON.stringify(datos)
-                }
-            );
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
 
-    } else {
+                        body:
+                            JSON.stringify(datos)
+                    }
+                );
 
-        /*
-         * Si estamos editando y no ingresamos
-         * una nueva contraseña, necesitamos
-         * conservar la anterior.
-         */
-
-        const usuarioActualRespuesta =
-            await fetch(
-                "/usuarios/" + id
-            );
-
-        const usuarioActual =
-            await usuarioActualRespuesta.json();
-
-
-        if (password === "") {
-
-            datos.password =
-                usuarioActual.password;
         }
 
 
-        respuesta =
-            await fetch(
-                "/usuarios/" + id,
-                {
+            // ==================================
+            // ACTUALIZAR USUARIO
+        // ==================================
 
-                    method: "PUT",
+        else {
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+            respuesta =
+                await fetch(
+                    "/usuarios/" + id,
+                    {
 
-                    body:
-                        JSON.stringify(datos)
-                }
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(datos)
+                    }
+                );
+        }
+
+
+        // ==================================
+        // ERROR DEL BACKEND
+        // ==================================
+
+        if (!respuesta.ok) {
+
+            const mensaje =
+                await respuesta.text();
+
+            alert(
+                mensaje ||
+                "No se pudo guardar el usuario"
             );
-    }
 
+            return;
+        }
 
-    if (!respuesta.ok) {
 
         alert(
-            "No se pudo guardar el usuario"
+            id === ""
+                ? "Usuario registrado correctamente"
+                : "Usuario actualizado correctamente"
         );
 
-        return;
+
+        limpiar();
+
+        await listar();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Error de conexión con el servidor"
+        );
     }
-
-
-    limpiar();
-
-    listar();
 }
 
+
+// ==========================================
+// EDITAR
+// ==========================================
 
 function editar(
     id,
@@ -308,6 +531,9 @@ function editar(
     ).value = username;
 
 
+    /*
+     * No mostramos la contraseña actual.
+     */
     document.getElementById(
         "password"
     ).value = "";
@@ -318,9 +544,7 @@ function editar(
     ).value = nombre;
 
 
-    document.getElementById(
-        "rol"
-    ).value = rol;
+    configurarRolesFormulario(rol);
 
 
     document.getElementById(
@@ -342,14 +566,23 @@ function editar(
 }
 
 
+// ==========================================
+// ELIMINAR
+// ==========================================
+
 async function eliminar(id) {
 
     const usuario =
         obtenerUsuarioSesion();
 
 
+    /*
+     * Evitamos que el usuario conectado
+     * elimine su propia cuenta.
+     */
     if (
-        usuario.idUsuario === id
+        Number(usuario.idUsuario) ===
+        Number(id)
     ) {
 
         alert(
@@ -371,28 +604,58 @@ async function eliminar(id) {
     }
 
 
-    const respuesta =
-        await fetch(
-            "/usuarios/" + id,
-            {
-                method: "DELETE"
-            }
-        );
+    try {
+
+        const respuesta =
+            await fetch(
+                "/usuarios/" + id,
+                {
+                    method: "DELETE"
+                }
+            );
 
 
-    if (!respuesta.ok) {
+        if (!respuesta.ok) {
+
+            const mensaje =
+                await respuesta.text();
+
+            alert(
+                mensaje ||
+                "No se pudo eliminar el usuario"
+            );
+
+            return;
+        }
+
+
+        const mensaje =
+            await respuesta.text();
+
 
         alert(
-            "No se pudo eliminar el usuario"
+            mensaje ||
+            "Usuario eliminado correctamente"
         );
 
-        return;
+
+        await listar();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Error de conexión con el servidor"
+        );
     }
-
-
-    listar();
 }
 
+
+// ==========================================
+// CAMBIAR ROL
+// ==========================================
 
 function cambiarRol() {
 
@@ -424,6 +687,10 @@ function cambiarRol() {
 }
 
 
+// ==========================================
+// LIMPIAR FORMULARIO
+// ==========================================
+
 function limpiar() {
 
     document.getElementById(
@@ -446,10 +713,7 @@ function limpiar() {
     ).value = "";
 
 
-    document.getElementById(
-        "rol"
-    ).value =
-        "PACIENTE";
+    configurarRolesFormulario();
 
 
     document.getElementById(
@@ -467,7 +731,13 @@ function limpiar() {
 }
 
 
+// ==========================================
+// INICIAR PÁGINA
+// ==========================================
+
 async function iniciar() {
+
+    configurarRolesFormulario();
 
     await cargarPacientes();
 
