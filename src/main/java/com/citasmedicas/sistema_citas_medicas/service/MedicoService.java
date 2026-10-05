@@ -40,12 +40,25 @@ public class MedicoService {
 
     // ==========================================
     // LISTAR SOLO MÉDICOS ACTIVOS
+    // Para reservas, horarios, etc.
     // ==========================================
 
     public List<Medico> listar() {
 
         return medicoRepository
                 .findByEstadoTrue();
+    }
+
+
+    // ==========================================
+    // LISTAR TODOS LOS MÉDICOS
+    // Para mantenimiento
+    // ==========================================
+
+    public List<Medico> listarTodos() {
+
+        return medicoRepository
+                .findAll();
     }
 
 
@@ -103,7 +116,7 @@ public class MedicoService {
         ) {
 
             throw new RuntimeException(
-                    "La especialidad seleccionada se encuentra desactivada"
+                    "La especialidad seleccionada se encuentra inactiva"
             );
         }
 
@@ -128,10 +141,6 @@ public class MedicoService {
                         medico
                 );
 
-
-        // ======================================
-        // REGISTRAR ACTIVIDAD
-        // ======================================
 
         actividadService.registrar(
                 "MEDICO",
@@ -168,18 +177,6 @@ public class MedicoService {
                         );
 
 
-        if (
-                !Boolean.TRUE.equals(
-                        actual.getEstado()
-                )
-        ) {
-
-            throw new RuntimeException(
-                    "El médico se encuentra desactivado"
-            );
-        }
-
-
         validar(
                 datos
         );
@@ -210,13 +207,13 @@ public class MedicoService {
         ) {
 
             throw new RuntimeException(
-                    "La especialidad seleccionada se encuentra desactivada"
+                    "La especialidad seleccionada se encuentra inactiva"
             );
         }
 
 
         // ======================================
-        // ACTUALIZAR CAMPOS
+        // ACTUALIZAR DATOS
         // ======================================
 
         actual.setNombre(
@@ -234,10 +231,6 @@ public class MedicoService {
         );
 
 
-        // ======================================
-        // ACTUALIZAR ESTADO
-        // ======================================
-
         if (
                 datos.getEstado() != null
         ) {
@@ -254,10 +247,6 @@ public class MedicoService {
                 );
 
 
-        // ======================================
-        // REGISTRAR ACTIVIDAD
-        // ======================================
-
         actividadService.registrar(
                 "MEDICO",
                 "Médico actualizado: "
@@ -272,7 +261,8 @@ public class MedicoService {
 
 
     // ==========================================
-    // DESACTIVAR MÉDICO
+    // ELIMINAR
+    // Eliminación lógica
     // ==========================================
 
     @Transactional
@@ -299,7 +289,7 @@ public class MedicoService {
         ) {
 
             throw new RuntimeException(
-                    "El médico ya se encuentra desactivado"
+                    "El médico ya se encuentra inactivo"
             );
         }
 
@@ -308,10 +298,7 @@ public class MedicoService {
                 medico.getNombre();
 
 
-        // ======================================
-        // DESACTIVACIÓN LÓGICA
-        // ======================================
-
+        // No se elimina físicamente.
         medico.setEstado(
                 false
         );
@@ -322,13 +309,9 @@ public class MedicoService {
         );
 
 
-        // ======================================
-        // REGISTRAR ACTIVIDAD
-        // ======================================
-
         actividadService.registrar(
                 "MEDICO",
-                "Médico desactivado: "
+                "Médico eliminado: "
                         + nombre,
                 null,
                 null
@@ -357,9 +340,7 @@ public class MedicoService {
         if (
                 medico.getNombre() == null
                         ||
-                        medico
-                                .getNombre()
-                                .isBlank()
+                        medico.getNombre().isBlank()
         ) {
 
             throw new RuntimeException(
@@ -371,9 +352,7 @@ public class MedicoService {
         if (
                 medico.getCmp() == null
                         ||
-                        medico
-                                .getCmp()
-                                .isBlank()
+                        medico.getCmp().isBlank()
         ) {
 
             throw new RuntimeException(

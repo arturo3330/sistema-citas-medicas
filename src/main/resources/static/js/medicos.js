@@ -39,16 +39,11 @@ async function cargarEspecialidades() {
 
         datos.forEach(e => {
 
-            if (
-                e.estado === true
-            ) {
-
-                select.innerHTML += `
-                    <option value="${e.idEspecialidad}">
-                        ${escaparTexto(e.nombre)}
-                    </option>
-                `;
-            }
+            select.innerHTML += `
+                <option value="${e.idEspecialidad}">
+                    ${escaparTexto(e.nombre)}
+                </option>
+            `;
         });
 
 
@@ -69,7 +64,7 @@ async function cargarEspecialidades() {
 
 
 // ==========================================
-// LISTAR MÉDICOS
+// LISTAR TODOS LOS MÉDICOS
 // ==========================================
 
 async function listar() {
@@ -84,7 +79,7 @@ async function listar() {
 
         const respuesta =
             await fetch(
-                "/medicos"
+                "/medicos/todos"
             );
 
 
@@ -111,7 +106,7 @@ async function listar() {
             tabla.innerHTML = `
                 <tr>
                     <td colspan="6">
-                        No hay médicos activos registrados.
+                        No hay médicos registrados.
                     </td>
                 </tr>
             `;
@@ -165,28 +160,25 @@ async function listar() {
 
                         <button
                             type="button"
-                            onclick="editar(
-                                ${m.idMedico},
-                                '${escaparParaJs(m.nombre)}',
-                                '${escaparParaJs(m.cmp)}',
-                                ${m.especialidad.idEspecialidad},
-                                ${m.estado}
-                            )">
+                            onclick="editar(${m.idMedico})">
 
                             Editar
 
                         </button>
 
+                        ${
+                m.estado
+                    ? `
+                                    <button
+                                        type="button"
+                                        onclick="eliminar(${m.idMedico})">
 
-                        <button
-                            type="button"
-                            onclick="eliminar(
-                                ${m.idMedico}
-                            )">
+                                        Eliminar
 
-                            Desactivar
-
-                        </button>
+                                    </button>
+                                  `
+                    : ""
+            }
 
                     </td>
 
@@ -318,10 +310,6 @@ async function guardar() {
         let respuesta;
 
 
-        // ======================================
-        // NUEVO
-        // ======================================
-
         if (
             id === ""
         ) {
@@ -346,11 +334,6 @@ async function guardar() {
                             )
                     }
                 );
-
-
-            // ======================================
-            // ACTUALIZAR
-            // ======================================
 
         } else {
 
@@ -391,7 +374,6 @@ async function guardar() {
                 "No se pudo guardar el médico.",
                 false
             );
-
 
             return;
         }
@@ -440,53 +422,128 @@ async function guardar() {
 // EDITAR
 // ==========================================
 
-function editar(
-    id,
-    nombre,
-    cmp,
-    idEspecialidad,
-    estado
+async function editar(
+    id
 ) {
 
-    document.getElementById(
-        "idMedico"
-    ).value =
-        id;
+    try {
+
+        const respuesta =
+            await fetch(
+                "/medicos/" + id
+            );
 
 
-    document.getElementById(
-        "nombre"
-    ).value =
-        nombre;
+        if (
+            !respuesta.ok
+        ) {
+
+            mostrarMensaje(
+                "No se pudo cargar el médico.",
+                false
+            );
+
+            return;
+        }
 
 
-    document.getElementById(
-        "cmp"
-    ).value =
-        cmp;
+        const medico =
+            await respuesta.json();
 
 
-    document.getElementById(
-        "especialidad"
-    ).value =
-        idEspecialidad;
+        document.getElementById(
+            "idMedico"
+        ).value =
+            medico.idMedico;
 
 
-    document.getElementById(
-        "estado"
-    ).value =
-        estado.toString();
+        document.getElementById(
+            "nombre"
+        ).value =
+            medico.nombre || "";
 
 
-    mostrarMensaje(
-        "Editando médico seleccionado.",
-        true
-    );
+        document.getElementById(
+            "cmp"
+        ).value =
+            medico.cmp || "";
+
+
+        const selectEspecialidad =
+            document.getElementById(
+                "especialidad"
+            );
+
+
+        if (
+            medico.especialidad
+            &&
+            medico.especialidad.idEspecialidad
+        ) {
+
+            const idEspecialidad =
+                String(
+                    medico.especialidad.idEspecialidad
+                );
+
+
+            const existe =
+                Array.from(
+                    selectEspecialidad.options
+                ).some(
+                    option =>
+                        option.value ===
+                        idEspecialidad
+                );
+
+
+            if (
+                !existe
+            ) {
+
+                await cargarEspecialidades();
+            }
+
+
+            selectEspecialidad.value =
+                idEspecialidad;
+        }
+
+
+        document.getElementById(
+            "estado"
+        ).value =
+            Boolean(
+                medico.estado
+            ).toString();
+
+
+        mostrarMensaje(
+            "Editando médico: "
+            +
+            medico.nombre,
+            true
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        mostrarMensaje(
+            "No se pudo cargar la información del médico.",
+            false
+        );
+    }
 }
 
 
 // ==========================================
-// DESACTIVAR MÉDICO
+// ELIMINAR MÉDICO
+// Realmente cambia estado a false
 // ==========================================
 
 async function eliminar(
@@ -495,11 +552,11 @@ async function eliminar(
 
     const confirmar =
         confirm(
-            "¿Desea desactivar este médico?\n\n"
+            "¿Desea eliminar este médico?\n\n"
             +
-            "El médico dejará de aparecer como disponible, "
+            "El médico quedará registrado como inactivo "
             +
-            "pero se conservarán sus horarios y citas históricas."
+            "y se conservarán sus horarios y citas históricas."
         );
 
 
@@ -528,10 +585,6 @@ async function eliminar(
             await respuesta.text();
 
 
-        // ======================================
-        // ERROR DEL BACKEND
-        // ======================================
-
         if (
             !respuesta.ok
         ) {
@@ -539,23 +592,18 @@ async function eliminar(
             mostrarMensaje(
                 contenido
                 ||
-                "No se pudo desactivar el médico.",
+                "No se pudo eliminar el médico.",
                 false
             );
-
 
             return;
         }
 
 
-        // ======================================
-        // CORRECTO
-        // ======================================
-
         mostrarMensaje(
             contenido
             ||
-            "Médico desactivado correctamente.",
+            "Médico eliminado correctamente.",
             true
         );
 
@@ -579,7 +627,7 @@ async function eliminar(
 
 
 // ==========================================
-// LIMPIAR FORMULARIO
+// LIMPIAR
 // ==========================================
 
 function limpiar() {
@@ -660,7 +708,7 @@ function mostrarMensaje(
 
 
 // ==========================================
-// ESCAPAR TEXTO HTML
+// ESCAPAR TEXTO
 // ==========================================
 
 function escaparTexto(
@@ -697,44 +745,6 @@ function escaparTexto(
         .replaceAll(
             "'",
             "&#039;"
-        );
-}
-
-
-// ==========================================
-// ESCAPAR TEXTO PARA onclick
-// ==========================================
-
-function escaparParaJs(
-    texto
-) {
-
-    if (
-        texto == null
-    ) {
-
-        return "";
-    }
-
-
-    return String(
-        texto
-    )
-        .replaceAll(
-            "\\",
-            "\\\\"
-        )
-        .replaceAll(
-            "'",
-            "\\'"
-        )
-        .replaceAll(
-            "\n",
-            " "
-        )
-        .replaceAll(
-            "\r",
-            " "
         );
 }
 

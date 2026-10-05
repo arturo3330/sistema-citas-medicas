@@ -26,13 +26,24 @@ public class MedicoController {
 
 
     // ==========================================
-    // LISTAR MÉDICOS ACTIVOS
+    // LISTAR SOLO ACTIVOS
     // ==========================================
 
     @GetMapping
     public List<Medico> listar() {
 
         return medicoService.listar();
+    }
+
+
+    // ==========================================
+    // LISTAR TODOS
+    // ==========================================
+
+    @GetMapping("/todos")
+    public List<Medico> listarTodos() {
+
+        return medicoService.listarTodos();
     }
 
 
@@ -59,7 +70,7 @@ public class MedicoController {
 
 
     // ==========================================
-    // REGISTRAR
+    // GUARDAR
     // ==========================================
 
     @PostMapping
@@ -127,7 +138,8 @@ public class MedicoController {
 
 
     // ==========================================
-    // DESACTIVAR MÉDICO
+    // ELIMINAR
+    // Lógicamente cambia estado a false
     // ==========================================
 
     @DeleteMapping("/{id}")
@@ -143,7 +155,7 @@ public class MedicoController {
 
 
             return ResponseEntity.ok(
-                    "Médico desactivado correctamente"
+                    "Médico eliminado correctamente"
             );
 
 
