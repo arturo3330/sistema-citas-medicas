@@ -6,6 +6,7 @@ import com.citasmedicas.sistema_citas_medicas.repository.EspecialidadRepository;
 import com.citasmedicas.sistema_citas_medicas.repository.MedicoRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,8 @@ public class MedicoService {
     public MedicoService(
             MedicoRepository medicoRepository,
             EspecialidadRepository especialidadRepository,
-            ActividadService actividadService) {
+            ActividadService actividadService
+    ) {
 
         this.medicoRepository =
                 medicoRepository;
@@ -37,12 +39,13 @@ public class MedicoService {
 
 
     // ==========================================
-    // LISTAR
+    // LISTAR SOLO MÉDICOS ACTIVOS
     // ==========================================
 
     public List<Medico> listar() {
 
-        return medicoRepository.findAll();
+        return medicoRepository
+                .findByEstadoTrue();
     }
 
 
@@ -51,7 +54,8 @@ public class MedicoService {
     // ==========================================
 
     public Optional<Medico> buscarPorId(
-            Long id) {
+            Long id
+    ) {
 
         return medicoRepository.findById(
                 id
@@ -63,8 +67,10 @@ public class MedicoService {
     // GUARDAR
     // ==========================================
 
+    @Transactional
     public Medico guardar(
-            Medico medico) {
+            Medico medico
+    ) {
 
         validar(
                 medico
@@ -89,12 +95,26 @@ public class MedicoService {
                         );
 
 
+        if (
+                !Boolean.TRUE.equals(
+                        especialidad.getEstado()
+                )
+        ) {
+
+            throw new RuntimeException(
+                    "La especialidad seleccionada se encuentra desactivada"
+            );
+        }
+
+
         medico.setEspecialidad(
                 especialidad
         );
 
 
-        if (medico.getEstado() == null) {
+        if (
+                medico.getEstado() == null
+        ) {
 
             medico.setEstado(
                     true
@@ -107,10 +127,6 @@ public class MedicoService {
                         medico
                 );
 
-
-        // ======================================
-        // REGISTRAR ACTIVIDAD
-        // ======================================
 
         actividadService.registrar(
                 "MEDICO",
@@ -129,18 +145,34 @@ public class MedicoService {
     // ACTUALIZAR
     // ==========================================
 
+    @Transactional
     public Medico actualizar(
             Long id,
-            Medico datos) {
+            Medico datos
+    ) {
 
         Medico actual =
                 medicoRepository
-                        .findById(id)
+                        .findById(
+                                id
+                        )
                         .orElseThrow(() ->
                                 new RuntimeException(
                                         "Médico no encontrado"
                                 )
                         );
+
+
+        if (
+                !Boolean.TRUE.equals(
+                        actual.getEstado()
+                )
+        ) {
+
+            throw new RuntimeException(
+                    "El médico se encuentra desactivado"
+            );
+        }
 
 
         validar(
@@ -166,6 +198,18 @@ public class MedicoService {
                         );
 
 
+        if (
+                !Boolean.TRUE.equals(
+                        especialidad.getEstado()
+                )
+        ) {
+
+            throw new RuntimeException(
+                    "La especialidad seleccionada se encuentra desactivada"
+            );
+        }
+
+
         actual.setNombre(
                 datos.getNombre()
         );
@@ -179,14 +223,6 @@ public class MedicoService {
         actual.setEspecialidad(
                 especialidad
         );
-
-
-        if (datos.getEstado() != null) {
-
-            actual.setEstado(
-                    datos.getEstado()
-            );
-        }
 
 
         Medico actualizado =
@@ -209,15 +245,19 @@ public class MedicoService {
 
 
     // ==========================================
-    // ELIMINAR
+    // DESACTIVAR MÉDICO
     // ==========================================
 
+    @Transactional
     public void eliminar(
-            Long id) {
+            Long id
+    ) {
 
         Medico medico =
                 medicoRepository
-                        .findById(id)
+                        .findById(
+                                id
+                        )
                         .orElseThrow(() ->
                                 new RuntimeException(
                                         "Médico no encontrado"
@@ -225,18 +265,35 @@ public class MedicoService {
                         );
 
 
+        if (
+                !Boolean.TRUE.equals(
+                        medico.getEstado()
+                )
+        ) {
+
+            throw new RuntimeException(
+                    "El médico ya se encuentra desactivado"
+            );
+        }
+
+
         String nombre =
                 medico.getNombre();
 
 
-        medicoRepository.delete(
+        medico.setEstado(
+                false
+        );
+
+
+        medicoRepository.save(
                 medico
         );
 
 
         actividadService.registrar(
                 "MEDICO",
-                "Médico eliminado: "
+                "Médico desactivado: "
                         + nombre,
                 null,
                 null
@@ -249,9 +306,12 @@ public class MedicoService {
     // ==========================================
 
     private void validar(
-            Medico medico) {
+            Medico medico
+    ) {
 
-        if (medico == null) {
+        if (
+                medico == null
+        ) {
 
             throw new RuntimeException(
                     "Los datos del médico son obligatorios"

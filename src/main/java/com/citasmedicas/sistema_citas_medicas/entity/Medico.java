@@ -17,14 +17,17 @@ public class Medico {
     @Column(length = 20)
     private String cmp;
 
-    private Boolean estado;
+    @Column(nullable = false)
+    private Boolean estado = true;
 
     @ManyToOne
     @JoinColumn(name = "id_especialidad", nullable = false)
     private Especialidad especialidad;
 
+
     public Medico() {
     }
+
 
     public Long getIdMedico() {
         return idMedico;
@@ -34,6 +37,7 @@ public class Medico {
         this.idMedico = idMedico;
     }
 
+
     public String getNombre() {
         return nombre;
     }
@@ -41,6 +45,7 @@ public class Medico {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+
 
     public String getCmp() {
         return cmp;
@@ -50,6 +55,7 @@ public class Medico {
         this.cmp = cmp;
     }
 
+
     public Boolean getEstado() {
         return estado;
     }
@@ -58,11 +64,15 @@ public class Medico {
         this.estado = estado;
     }
 
+
     public Especialidad getEspecialidad() {
         return especialidad;
     }
 
-    public void setEspecialidad(Especialidad especialidad) {
-        this.especialidad = especialidad;
+    public void setEspecialidad(
+            Especialidad especialidad
+    ) {
+        this.especialidad =
+                especialidad;
     }
 }

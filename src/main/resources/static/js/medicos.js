@@ -1,136 +1,444 @@
+// ==========================================
+// CARGAR ESPECIALIDADES
+// ==========================================
+
 async function cargarEspecialidades() {
 
-    const respuesta = await fetch("/especialidades");
-    const datos = await respuesta.json();
+    const select =
+        document.getElementById(
+            "especialidad"
+        );
 
-    const select = document.getElementById("especialidad");
 
-    select.innerHTML = "";
+    try {
 
-    datos.forEach(e => {
+        const respuesta =
+            await fetch(
+                "/especialidades"
+            );
 
-        select.innerHTML += `
-            <option value="${e.idEspecialidad}">
-                ${e.nombre}
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No se pudieron cargar las especialidades"
+            );
+        }
+
+
+        const datos =
+            await respuesta.json();
+
+
+        select.innerHTML = `
+            <option value="">
+                Seleccione una especialidad
             </option>
         `;
-    });
+
+
+        datos.forEach(e => {
+
+            if (
+                e.estado === true
+            ) {
+
+                select.innerHTML += `
+                    <option value="${e.idEspecialidad}">
+                        ${escaparTexto(e.nombre)}
+                    </option>
+                `;
+            }
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        select.innerHTML = `
+            <option value="">
+                Error al cargar especialidades
+            </option>
+        `;
+    }
 }
 
+
+// ==========================================
+// LISTAR MÉDICOS
+// ==========================================
 
 async function listar() {
 
-    const respuesta = await fetch("/medicos");
-    const datos = await respuesta.json();
+    const tabla =
+        document.getElementById(
+            "tablaMedicos"
+        );
 
-    const tabla = document.getElementById("tablaMedicos");
 
-    tabla.innerHTML = "";
+    try {
 
-    datos.forEach(m => {
+        const respuesta =
+            await fetch(
+                "/medicos"
+            );
 
-        tabla.innerHTML += `
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No se pudieron cargar los médicos"
+            );
+        }
+
+
+        const datos =
+            await respuesta.json();
+
+
+        tabla.innerHTML =
+            "";
+
+
+        if (
+            datos.length === 0
+        ) {
+
+            tabla.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        No hay médicos activos registrados.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        datos.forEach(m => {
+
+            const especialidad =
+                m.especialidad
+                    ? m.especialidad.nombre
+                    : "-";
+
+
+            tabla.innerHTML += `
+                <tr>
+
+                    <td>
+                        ${m.idMedico}
+                    </td>
+
+                    <td>
+                        ${escaparTexto(
+                m.nombre
+            )}
+                    </td>
+
+                    <td>
+                        ${escaparTexto(
+                m.cmp
+            )}
+                    </td>
+
+                    <td>
+                        ${escaparTexto(
+                especialidad
+            )}
+                    </td>
+
+                    <td>
+                        ${
+                m.estado
+                    ? "Activo"
+                    : "Inactivo"
+            }
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            onclick="editar(
+                                ${m.idMedico},
+                                '${escaparParaJs(m.nombre)}',
+                                '${escaparParaJs(m.cmp)}',
+                                ${m.especialidad.idEspecialidad},
+                                ${m.estado}
+                            )">
+
+                            Editar
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            onclick="eliminar(
+                                ${m.idMedico}
+                            )">
+
+                            Desactivar
+
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        tabla.innerHTML = `
             <tr>
-
-                <td>${m.idMedico}</td>
-
-                <td>${m.nombre}</td>
-
-                <td>${m.cmp}</td>
-
-                <td>${m.especialidad.nombre}</td>
-
-                <td>
-                    ${m.estado ? "Activo" : "Inactivo"}
+                <td colspan="6">
+                    Error al cargar los médicos.
                 </td>
-
-                <td>
-
-                    <button onclick="editar(
-                        ${m.idMedico},
-                        '${m.nombre}',
-                        '${m.cmp}',
-                        ${m.especialidad.idEspecialidad},
-                        ${m.estado}
-                    )">
-                        Editar
-                    </button>
-
-                    <button onclick="eliminar(${m.idMedico})">
-                        Eliminar
-                    </button>
-
-                </td>
-
             </tr>
         `;
-    });
+    }
 }
 
+
+// ==========================================
+// GUARDAR / ACTUALIZAR
+// ==========================================
 
 async function guardar() {
 
     const id =
-        document.getElementById("idMedico").value;
+        document.getElementById(
+            "idMedico"
+        ).value;
+
 
     const nombre =
-        document.getElementById("nombre").value;
+        document.getElementById(
+            "nombre"
+        ).value.trim();
+
 
     const cmp =
-        document.getElementById("cmp").value;
+        document.getElementById(
+            "cmp"
+        ).value.trim();
+
 
     const idEspecialidad =
-        document.getElementById("especialidad").value;
+        document.getElementById(
+            "especialidad"
+        ).value;
+
 
     const estado =
-        document.getElementById("estado").value === "true";
+        document.getElementById(
+            "estado"
+        ).value === "true";
+
+
+    // ======================================
+    // VALIDACIONES
+    // ======================================
+
+    if (
+        nombre === ""
+    ) {
+
+        mostrarMensaje(
+            "Ingrese el nombre del médico.",
+            false
+        );
+
+        return;
+    }
+
+
+    if (
+        cmp === ""
+    ) {
+
+        mostrarMensaje(
+            "Ingrese el CMP del médico.",
+            false
+        );
+
+        return;
+    }
+
+
+    if (
+        idEspecialidad === ""
+    ) {
+
+        mostrarMensaje(
+            "Seleccione una especialidad.",
+            false
+        );
+
+        return;
+    }
+
 
     const datos = {
 
-        nombre: nombre,
+        nombre:
+        nombre,
 
-        cmp: cmp,
+        cmp:
+        cmp,
 
         especialidad: {
-            idEspecialidad: Number(idEspecialidad)
+
+            idEspecialidad:
+                Number(
+                    idEspecialidad
+                )
         },
 
-        estado: estado
+        estado:
+        estado
     };
 
 
-    if (id === "") {
+    try {
 
-        await fetch("/medicos", {
+        let respuesta;
 
-            method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        // ======================================
+        // NUEVO
+        // ======================================
 
-            body: JSON.stringify(datos)
-        });
+        if (
+            id === ""
+        ) {
 
-    } else {
+            respuesta =
+                await fetch(
+                    "/medicos",
+                    {
 
-        await fetch("/medicos/" + id, {
+                        method:
+                            "POST",
 
-            method: "PUT",
+                        headers: {
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+                            "Content-Type":
+                                "application/json"
+                        },
 
-            body: JSON.stringify(datos)
-        });
+                        body:
+                            JSON.stringify(
+                                datos
+                            )
+                    }
+                );
+
+
+            // ======================================
+            // ACTUALIZAR
+            // ======================================
+
+        } else {
+
+            respuesta =
+                await fetch(
+                    "/medicos/" + id,
+                    {
+
+                        method:
+                            "PUT",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                datos
+                            )
+                    }
+                );
+        }
+
+
+        const contenido =
+            await respuesta.text();
+
+
+        if (
+            !respuesta.ok
+        ) {
+
+            mostrarMensaje(
+                contenido
+                ||
+                "No se pudo guardar el médico.",
+                false
+            );
+
+
+            return;
+        }
+
+
+        if (
+            id === ""
+        ) {
+
+            mostrarMensaje(
+                "Médico registrado correctamente.",
+                true
+            );
+
+        } else {
+
+            mostrarMensaje(
+                "Médico actualizado correctamente.",
+                true
+            );
+        }
+
+
+        limpiar();
+
+
+        await listar();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        mostrarMensaje(
+            "No se pudo conectar con el servidor.",
+            false
+        );
     }
-
-    limpiar();
-
-    listar();
 }
 
+
+// ==========================================
+// EDITAR
+// ==========================================
 
 function editar(
     id,
@@ -140,51 +448,300 @@ function editar(
     estado
 ) {
 
-    document.getElementById("idMedico").value = id;
+    document.getElementById(
+        "idMedico"
+    ).value =
+        id;
 
-    document.getElementById("nombre").value = nombre;
 
-    document.getElementById("cmp").value = cmp;
+    document.getElementById(
+        "nombre"
+    ).value =
+        nombre;
 
-    document.getElementById("especialidad").value =
+
+    document.getElementById(
+        "cmp"
+    ).value =
+        cmp;
+
+
+    document.getElementById(
+        "especialidad"
+    ).value =
         idEspecialidad;
 
-    document.getElementById("estado").value =
+
+    document.getElementById(
+        "estado"
+    ).value =
         estado.toString();
+
+
+    mostrarMensaje(
+        "Editando médico seleccionado.",
+        true
+    );
 }
 
 
-async function eliminar(id) {
+// ==========================================
+// DESACTIVAR MÉDICO
+// ==========================================
+
+async function eliminar(
+    id
+) {
 
     const confirmar =
-        confirm("¿Desea eliminar el médico?");
+        confirm(
+            "¿Desea desactivar este médico?\n\n"
+            +
+            "El médico dejará de aparecer como disponible, "
+            +
+            "pero se conservarán sus horarios y citas históricas."
+        );
 
-    if (!confirmar) {
+
+    if (
+        !confirmar
+    ) {
+
         return;
     }
 
-    await fetch(
-        "/medicos/" + id,
-        {
-            method: "DELETE"
-        }
-    );
 
-    listar();
+    try {
+
+        const respuesta =
+            await fetch(
+                "/medicos/" + id,
+                {
+
+                    method:
+                        "DELETE"
+                }
+            );
+
+
+        const contenido =
+            await respuesta.text();
+
+
+        // ======================================
+        // ERROR DEL BACKEND
+        // ======================================
+
+        if (
+            !respuesta.ok
+        ) {
+
+            mostrarMensaje(
+                contenido
+                ||
+                "No se pudo desactivar el médico.",
+                false
+            );
+
+
+            return;
+        }
+
+
+        // ======================================
+        // CORRECTO
+        // ======================================
+
+        mostrarMensaje(
+            contenido
+            ||
+            "Médico desactivado correctamente.",
+            true
+        );
+
+
+        await listar();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        mostrarMensaje(
+            "No se pudo conectar con el servidor.",
+            false
+        );
+    }
 }
 
+
+// ==========================================
+// LIMPIAR FORMULARIO
+// ==========================================
 
 function limpiar() {
 
-    document.getElementById("idMedico").value = "";
+    document.getElementById(
+        "idMedico"
+    ).value =
+        "";
 
-    document.getElementById("nombre").value = "";
 
-    document.getElementById("cmp").value = "";
+    document.getElementById(
+        "nombre"
+    ).value =
+        "";
 
-    document.getElementById("estado").value = "true";
+
+    document.getElementById(
+        "cmp"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "especialidad"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "estado"
+    ).value =
+        "true";
 }
 
+
+// ==========================================
+// MOSTRAR MENSAJE
+// ==========================================
+
+function mostrarMensaje(
+    texto,
+    exito
+) {
+
+    const mensaje =
+        document.getElementById(
+            "mensaje"
+        );
+
+
+    if (
+        !mensaje
+    ) {
+
+        if (
+            texto !== ""
+        ) {
+
+            alert(
+                texto
+            );
+        }
+
+
+        return;
+    }
+
+
+    mensaje.innerText =
+        texto;
+
+
+    mensaje.style.color =
+        exito
+            ? "#1b7f3b"
+            : "#b3261e";
+}
+
+
+// ==========================================
+// ESCAPAR TEXTO HTML
+// ==========================================
+
+function escaparTexto(
+    texto
+) {
+
+    if (
+        texto == null
+    ) {
+
+        return "";
+    }
+
+
+    return String(
+        texto
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+}
+
+
+// ==========================================
+// ESCAPAR TEXTO PARA onclick
+// ==========================================
+
+function escaparParaJs(
+    texto
+) {
+
+    if (
+        texto == null
+    ) {
+
+        return "";
+    }
+
+
+    return String(
+        texto
+    )
+        .replaceAll(
+            "\\",
+            "\\\\"
+        )
+        .replaceAll(
+            "'",
+            "\\'"
+        )
+        .replaceAll(
+            "\n",
+            " "
+        )
+        .replaceAll(
+            "\r",
+            " "
+        );
+}
+
+
+// ==========================================
+// INICIAR
+// ==========================================
 
 async function iniciar() {
 
