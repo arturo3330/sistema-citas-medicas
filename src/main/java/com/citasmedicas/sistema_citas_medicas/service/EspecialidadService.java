@@ -4,6 +4,7 @@ import com.citasmedicas.sistema_citas_medicas.entity.Especialidad;
 import com.citasmedicas.sistema_citas_medicas.repository.EspecialidadRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,7 +24,8 @@ public class EspecialidadService {
 
     public EspecialidadService(
             EspecialidadRepository especialidadRepository,
-            ActividadService actividadService) {
+            ActividadService actividadService
+    ) {
 
         this.especialidadRepository =
                 especialidadRepository;
@@ -34,10 +36,23 @@ public class EspecialidadService {
 
 
     // ==========================================
-    // LISTAR
+    // LISTAR SOLO ESPECIALIDADES ACTIVAS
+    // Para reservas, médicos, horarios, etc.
     // ==========================================
 
     public List<Especialidad> listar() {
+
+        return especialidadRepository
+                .findByEstadoTrue();
+    }
+
+
+    // ==========================================
+    // LISTAR TODAS LAS ESPECIALIDADES
+    // Para mantenimiento
+    // ==========================================
+
+    public List<Especialidad> listarTodas() {
 
         return especialidadRepository
                 .findAll();
@@ -49,7 +64,8 @@ public class EspecialidadService {
     // ==========================================
 
     public Optional<Especialidad> buscarPorId(
-            Long id) {
+            Long id
+    ) {
 
         return especialidadRepository
                 .findById(
@@ -62,8 +78,10 @@ public class EspecialidadService {
     // GUARDAR
     // ==========================================
 
+    @Transactional
     public Especialidad guardar(
-            Especialidad especialidad) {
+            Especialidad especialidad
+    ) {
 
         normalizar(
                 especialidad
@@ -109,9 +127,11 @@ public class EspecialidadService {
     // ACTUALIZAR
     // ==========================================
 
+    @Transactional
     public Especialidad actualizar(
             Long id,
-            Especialidad datos) {
+            Especialidad datos
+    ) {
 
         Especialidad actual =
                 especialidadRepository
@@ -135,6 +155,10 @@ public class EspecialidadService {
         );
 
 
+        // ======================================
+        // ACTUALIZAR DATOS
+        // ======================================
+
         actual.setNombre(
                 datos.getNombre()
         );
@@ -149,6 +173,10 @@ public class EspecialidadService {
                 datos.getCostoConsulta()
         );
 
+
+        // ======================================
+        // ACTUALIZAR ESTADO
+        // ======================================
 
         if (
                 datos.getEstado() != null
@@ -181,11 +209,14 @@ public class EspecialidadService {
 
 
     // ==========================================
-    // DESACTIVAR
+    // ELIMINAR
+    // Eliminación lógica
     // ==========================================
 
+    @Transactional
     public void eliminar(
-            Long id) {
+            Long id
+    ) {
 
         Especialidad especialidad =
                 especialidadRepository
@@ -211,22 +242,28 @@ public class EspecialidadService {
         }
 
 
+        String nombre =
+                especialidad.getNombre();
+
+
+        // ======================================
+        // ELIMINACIÓN LÓGICA
+        // ======================================
+
         especialidad.setEstado(
                 false
         );
 
 
-        Especialidad actualizada =
-                especialidadRepository
-                        .save(
-                                especialidad
-                        );
+        especialidadRepository.save(
+                especialidad
+        );
 
 
         actividadService.registrar(
                 "ESPECIALIDAD",
-                "Especialidad desactivada: "
-                        + actualizada.getNombre(),
+                "Especialidad eliminada: "
+                        + nombre,
                 null,
                 null
         );
@@ -238,7 +275,8 @@ public class EspecialidadService {
     // ==========================================
 
     private void normalizar(
-            Especialidad especialidad) {
+            Especialidad especialidad
+    ) {
 
         if (
                 especialidad == null
@@ -266,7 +304,8 @@ public class EspecialidadService {
     // ==========================================
 
     private void validar(
-            Especialidad especialidad) {
+            Especialidad especialidad
+    ) {
 
         if (
                 especialidad == null

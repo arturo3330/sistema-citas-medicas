@@ -7,7 +7,7 @@ const COSTO_MAXIMO =
 
 
 // ==========================================
-// LISTAR ESPECIALIDADES ACTIVAS
+// LISTAR TODAS LAS ESPECIALIDADES
 // ==========================================
 
 async function listar() {
@@ -16,7 +16,7 @@ async function listar() {
 
         const respuesta =
             await fetch(
-                "/especialidades"
+                "/especialidades/todas"
             );
 
 
@@ -42,19 +42,8 @@ async function listar() {
             "";
 
 
-        // ======================================
-        // SOLO ESPECIALIDADES ACTIVAS
-        // ======================================
-
-        const activas =
-            datos.filter(
-                e =>
-                    e.estado === true
-            );
-
-
         if (
-            activas.length === 0
+            datos.length === 0
         ) {
 
             tabla.innerHTML = `
@@ -64,7 +53,7 @@ async function listar() {
                         colspan="6"
                         class="tabla-vacia">
 
-                        No hay especialidades activas registradas.
+                        No hay especialidades registradas.
 
                     </td>
 
@@ -75,7 +64,7 @@ async function listar() {
         }
 
 
-        activas.forEach(
+        datos.forEach(
             e => {
 
                 const duracion =
@@ -105,6 +94,12 @@ async function listar() {
                 }
 
 
+                const textoEstado =
+                    e.estado
+                        ? "Activo"
+                        : "Inactivo";
+
+
                 tabla.innerHTML += `
                     <tr>
 
@@ -127,7 +122,7 @@ async function listar() {
                         </td>
 
                         <td>
-                            Activo
+                            ${textoEstado}
                         </td>
 
                         <td>
@@ -143,15 +138,21 @@ async function listar() {
                             </button>
 
 
-                            <button
-                                type="button"
-                                onclick="eliminar(
-                                    ${e.idEspecialidad}
-                                )">
+                            ${
+                    e.estado
+                        ? `
+                                        <button
+                                            type="button"
+                                            onclick="eliminar(
+                                                ${e.idEspecialidad}
+                                            )">
 
-                                Desactivar
+                                            Eliminar
 
-                            </button>
+                                        </button>
+                                      `
+                        : ""
+                }
 
                         </td>
 
@@ -547,7 +548,8 @@ async function editar(
 
 
 // ==========================================
-// DESACTIVAR
+// ELIMINAR
+// Eliminación lógica: estado = false
 // ==========================================
 
 async function eliminar(
@@ -556,7 +558,9 @@ async function eliminar(
 
     const confirmar =
         confirm(
-            "¿Desea desactivar esta especialidad?"
+            "¿Desea eliminar esta especialidad?\n\n"
+            +
+            "La especialidad quedará registrada como inactiva."
         );
 
 
@@ -592,7 +596,7 @@ async function eliminar(
             throw new Error(
                 texto
                 ||
-                "No se pudo desactivar la especialidad"
+                "No se pudo eliminar la especialidad"
             );
         }
 
@@ -600,7 +604,7 @@ async function eliminar(
         mostrarMensaje(
             texto
             ||
-            "Especialidad desactivada correctamente.",
+            "Especialidad eliminada correctamente.",
             "ok"
         );
 
@@ -638,7 +642,7 @@ async function eliminar(
         mostrarMensaje(
             error.message
             ||
-            "No se pudo desactivar la especialidad.",
+            "No se pudo eliminar la especialidad.",
             "error"
         );
     }
