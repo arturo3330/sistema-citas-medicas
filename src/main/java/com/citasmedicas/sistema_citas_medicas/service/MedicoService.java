@@ -57,9 +57,10 @@ public class MedicoService {
             Long id
     ) {
 
-        return medicoRepository.findById(
-                id
-        );
+        return medicoRepository
+                .findById(
+                        id
+                );
     }
 
 
@@ -127,6 +128,10 @@ public class MedicoService {
                         medico
                 );
 
+
+        // ======================================
+        // REGISTRAR ACTIVIDAD
+        // ======================================
 
         actividadService.registrar(
                 "MEDICO",
@@ -210,6 +215,10 @@ public class MedicoService {
         }
 
 
+        // ======================================
+        // ACTUALIZAR CAMPOS
+        // ======================================
+
         actual.setNombre(
                 datos.getNombre()
         );
@@ -225,11 +234,29 @@ public class MedicoService {
         );
 
 
+        // ======================================
+        // ACTUALIZAR ESTADO
+        // ======================================
+
+        if (
+                datos.getEstado() != null
+        ) {
+
+            actual.setEstado(
+                    datos.getEstado()
+            );
+        }
+
+
         Medico actualizado =
                 medicoRepository.save(
                         actual
                 );
 
+
+        // ======================================
+        // REGISTRAR ACTIVIDAD
+        // ======================================
 
         actividadService.registrar(
                 "MEDICO",
@@ -281,6 +308,10 @@ public class MedicoService {
                 medico.getNombre();
 
 
+        // ======================================
+        // DESACTIVACIÓN LÓGICA
+        // ======================================
+
         medico.setEstado(
                 false
         );
@@ -290,6 +321,10 @@ public class MedicoService {
                 medico
         );
 
+
+        // ======================================
+        // REGISTRAR ACTIVIDAD
+        // ======================================
 
         actividadService.registrar(
                 "MEDICO",
