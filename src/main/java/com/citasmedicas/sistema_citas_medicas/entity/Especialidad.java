@@ -1,6 +1,7 @@
 package com.citasmedicas.sistema_citas_medicas.entity;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "especialidad")
@@ -14,10 +15,14 @@ public class Especialidad {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    private Boolean estado;
+    @Column(name = "tiempo_atencion_minutos", nullable = false)
+    private Integer tiempoAtencionMinutos;
 
-    public Especialidad() {
-    }
+    @Column(name = "costo_consulta", nullable = false, precision = 10, scale = 2)
+    private BigDecimal costoConsulta;
+
+    @Column(nullable = false)
+    private Boolean estado;
 
     public Long getIdEspecialidad() {
         return idEspecialidad;
@@ -33,6 +38,22 @@ public class Especialidad {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Integer getTiempoAtencionMinutos() {
+        return tiempoAtencionMinutos;
+    }
+
+    public void setTiempoAtencionMinutos(Integer tiempoAtencionMinutos) {
+        this.tiempoAtencionMinutos = tiempoAtencionMinutos;
+    }
+
+    public BigDecimal getCostoConsulta() {
+        return costoConsulta;
+    }
+
+    public void setCostoConsulta(BigDecimal costoConsulta) {
+        this.costoConsulta = costoConsulta;
     }
 
     public Boolean getEstado() {

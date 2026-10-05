@@ -9,11 +9,9 @@ import java.time.LocalTime;
 @Table(
         name = "horario",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {
-                        "id_medico",
-                        "fecha",
-                        "hora"
-                })
+                @UniqueConstraint(
+                        columnNames = {"id_medico", "fecha", "hora"}
+                )
         }
 )
 public class Horario {
@@ -33,11 +31,14 @@ public class Horario {
     @Column(nullable = false)
     private LocalTime hora;
 
+    @Column(name = "hora_fin")
+    private LocalTime horaFin;
+
+    @Column(name = "dia_semana", length = 15)
+    private String diaSemana;
+
     @Column(nullable = false, length = 20)
     private String estado;
-
-    public Horario() {
-    }
 
     public Long getIdHorario() {
         return idHorario;
@@ -69,6 +70,22 @@ public class Horario {
 
     public void setHora(LocalTime hora) {
         this.hora = hora;
+    }
+
+    public LocalTime getHoraFin() {
+        return horaFin;
+    }
+
+    public void setHoraFin(LocalTime horaFin) {
+        this.horaFin = horaFin;
+    }
+
+    public String getDiaSemana() {
+        return diaSemana;
+    }
+
+    public void setDiaSemana(String diaSemana) {
+        this.diaSemana = diaSemana;
     }
 
     public String getEstado() {

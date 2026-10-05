@@ -2,6 +2,7 @@ package com.citasmedicas.sistema_citas_medicas.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,7 +15,11 @@ public class Cita {
     private Long idCita;
 
     @OneToOne
-    @JoinColumn(name = "id_horario", nullable = false, unique = true)
+    @JoinColumn(
+            name = "id_horario",
+            nullable = false,
+            unique = true
+    )
     private Horario horario;
 
     @ManyToOne
@@ -24,11 +29,17 @@ public class Cita {
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro;
 
-    @Column(length = 20)
+    @Column(nullable = false, length = 30)
     private String estado;
 
-    public Cita() {
-    }
+    @Column(name = "monto_total", precision = 10, scale = 2, nullable = false)
+    private BigDecimal montoTotal;
+
+    @Column(name = "monto_pagado", precision = 10, scale = 2, nullable = false)
+    private BigDecimal montoPagado;
+
+    @Column(precision = 10, scale = 2, nullable = false)
+    private BigDecimal saldo;
 
     public Long getIdCita() {
         return idCita;
@@ -68,5 +79,29 @@ public class Cita {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public BigDecimal getMontoTotal() {
+        return montoTotal;
+    }
+
+    public void setMontoTotal(BigDecimal montoTotal) {
+        this.montoTotal = montoTotal;
+    }
+
+    public BigDecimal getMontoPagado() {
+        return montoPagado;
+    }
+
+    public void setMontoPagado(BigDecimal montoPagado) {
+        this.montoPagado = montoPagado;
+    }
+
+    public BigDecimal getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(BigDecimal saldo) {
+        this.saldo = saldo;
     }
 }
