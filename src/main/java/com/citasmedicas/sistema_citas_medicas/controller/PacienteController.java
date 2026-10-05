@@ -15,61 +15,160 @@ public class PacienteController {
 
     private final PacienteService pacienteService;
 
-    public PacienteController(PacienteService pacienteService) {
-        this.pacienteService = pacienteService;
+
+    public PacienteController(
+            PacienteService pacienteService
+    ) {
+
+        this.pacienteService =
+                pacienteService;
     }
+
+
+    // ==========================================
+    // LISTAR
+    // ==========================================
 
     @GetMapping
     public List<Paciente> listar() {
+
         return pacienteService.listar();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> buscar(@PathVariable Long id) {
 
-        return pacienteService.buscarPorId(id)
+    // ==========================================
+    // BUSCAR POR ID
+    // ==========================================
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscar(
+            @PathVariable Long id
+    ) {
+
+        return pacienteService
+                .buscarPorId(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(
+                        ResponseEntity
+                                .notFound()
+                                .build()
+                );
     }
+
+
+    // ==========================================
+    // BUSCAR POR DNI
+    // ==========================================
 
     @GetMapping("/dni/{dni}")
-    public ResponseEntity<?> buscarPorDni(@PathVariable String dni) {
+    public ResponseEntity<?> buscarPorDni(
+            @PathVariable String dni
+    ) {
 
-        return pacienteService.buscarPorDni(dni)
+        return pacienteService
+                .buscarPorDni(dni)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(
+                        ResponseEntity
+                                .notFound()
+                                .build()
+                );
     }
+
+
+    // ==========================================
+    // GUARDAR
+    // ==========================================
 
     @PostMapping
-    public Paciente guardar(@RequestBody Paciente paciente) {
-        return pacienteService.guardar(paciente);
+    public ResponseEntity<?> guardar(
+            @RequestBody Paciente paciente
+    ) {
+
+        try {
+
+            Paciente guardado =
+                    pacienteService.guardar(
+                            paciente
+                    );
+
+            return ResponseEntity
+                    .ok(
+                            guardado
+                    );
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            e.getMessage()
+                    );
+        }
     }
+
+
+    // ==========================================
+    // ACTUALIZAR
+    // ==========================================
 
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(
             @PathVariable Long id,
-            @RequestBody Paciente paciente) {
+            @RequestBody Paciente paciente
+    ) {
 
-        if (pacienteService.buscarPorId(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
+        try {
+
+            Paciente actualizado =
+                    pacienteService.actualizar(
+                            id,
+                            paciente
+                    );
+
+            return ResponseEntity
+                    .ok(
+                            actualizado
+                    );
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            e.getMessage()
+                    );
         }
-
-        paciente.setIdPaciente(id);
-
-        return ResponseEntity.ok(
-                pacienteService.guardar(paciente)
-        );
     }
 
+
+    // ==========================================
+    // DESACTIVAR
+    // ==========================================
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+    public ResponseEntity<?> eliminar(
+            @PathVariable Long id
+    ) {
 
-        if (pacienteService.buscarPorId(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
+        try {
+
+            pacienteService.eliminar(
+                    id
+            );
+
+            return ResponseEntity
+                    .ok(
+                            "Paciente desactivado correctamente"
+                    );
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            e.getMessage()
+                    );
         }
-
-        pacienteService.eliminar(id);
-
-        return ResponseEntity.ok("Paciente eliminado");
     }
 }

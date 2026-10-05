@@ -4,6 +4,7 @@ import com.citasmedicas.sistema_citas_medicas.entity.Paciente;
 import com.citasmedicas.sistema_citas_medicas.repository.PacienteRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,9 +28,14 @@ public class PacienteService {
             );
 
 
+    // ==========================================
+    // CONSTRUCTOR
+    // ==========================================
+
     public PacienteService(
             PacienteRepository pacienteRepository,
-            ActividadService actividadService) {
+            ActividadService actividadService
+    ) {
 
         this.pacienteRepository =
                 pacienteRepository;
@@ -40,13 +46,13 @@ public class PacienteService {
 
 
     // ==========================================
-    // LISTAR
-    // ==========================================
+// LISTAR PACIENTES ACTIVOS
+// ==========================================
 
     public List<Paciente> listar() {
 
         return pacienteRepository
-                .findAll();
+                .findByEstadoTrue();
     }
 
 
@@ -55,7 +61,8 @@ public class PacienteService {
     // ==========================================
 
     public Optional<Paciente> buscarPorId(
-            Long id) {
+            Long id
+    ) {
 
         return pacienteRepository
                 .findById(
@@ -69,7 +76,8 @@ public class PacienteService {
     // ==========================================
 
     public Optional<Paciente> buscarPorDni(
-            String dni) {
+            String dni
+    ) {
 
         return pacienteRepository
                 .findByDni(
@@ -82,8 +90,10 @@ public class PacienteService {
     // GUARDAR
     // ==========================================
 
+    @Transactional
     public Paciente guardar(
-            Paciente paciente) {
+            Paciente paciente
+    ) {
 
         // ======================================
         // NORMALIZAR DATOS
@@ -101,6 +111,20 @@ public class PacienteService {
         validar(
                 paciente
         );
+
+
+        // ======================================
+        // ESTADO POR DEFECTO
+        // ======================================
+
+        if (
+                paciente.getEstado() == null
+        ) {
+
+            paciente.setEstado(
+                    true
+            );
+        }
 
 
         // ======================================
@@ -135,9 +159,11 @@ public class PacienteService {
     // ACTUALIZAR
     // ==========================================
 
+    @Transactional
     public Paciente actualizar(
             Long id,
-            Paciente datos) {
+            Paciente datos
+    ) {
 
         Paciente actual =
                 pacienteRepository
@@ -193,6 +219,15 @@ public class PacienteService {
         );
 
 
+        /*
+         * No modificamos el estado aquí.
+         *
+         * De esa manera editar nombre, DNI,
+         * teléfono o correo no reactiva ni
+         * desactiva accidentalmente al paciente.
+         */
+
+
         // ======================================
         // GUARDAR CAMBIOS
         // ======================================
@@ -222,11 +257,13 @@ public class PacienteService {
 
 
     // ==========================================
-    // ELIMINAR
+    // ELIMINAR / DESACTIVAR
     // ==========================================
 
+    @Transactional
     public void eliminar(
-            Long id) {
+            Long id
+    ) {
 
         Paciente paciente =
                 pacienteRepository
@@ -240,18 +277,47 @@ public class PacienteService {
                         );
 
 
+        // ======================================
+        // YA ESTÁ DESACTIVADO
+        // ======================================
+
+        if (
+                Boolean.FALSE.equals(
+                        paciente.getEstado()
+                )
+        ) {
+
+            throw new RuntimeException(
+                    "El paciente ya se encuentra desactivado"
+            );
+        }
+
+
         String nombre =
                 paciente.getNombre();
 
 
-        pacienteRepository.delete(
+        // ======================================
+        // DESACTIVACIÓN LÓGICA
+        // ======================================
+
+        paciente.setEstado(
+                false
+        );
+
+
+        pacienteRepository.save(
                 paciente
         );
 
 
+        // ======================================
+        // REGISTRAR ACTIVIDAD
+        // ======================================
+
         actividadService.registrar(
                 "PACIENTE",
-                "Paciente eliminado: "
+                "Paciente desactivado: "
                         + nombre,
                 null,
                 null
@@ -264,7 +330,8 @@ public class PacienteService {
     // ==========================================
 
     private void normalizar(
-            Paciente paciente) {
+            Paciente paciente
+    ) {
 
         if (
                 paciente == null
@@ -356,7 +423,8 @@ public class PacienteService {
     // ==========================================
 
     private void validar(
-            Paciente paciente) {
+            Paciente paciente
+    ) {
 
         // ======================================
         // PACIENTE
@@ -453,7 +521,9 @@ public class PacienteService {
                                 .isBlank()
         ) {
 
+            // ==================================
             // SOLO NÚMEROS
+            // ==================================
 
             if (
                     !paciente
@@ -467,7 +537,9 @@ public class PacienteService {
             }
 
 
+            // ==================================
             // MÁXIMO 10 DÍGITOS
+            // ==================================
 
             if (
                     paciente
