@@ -4,6 +4,53 @@
 
 let especialidades = [];
 
+let politica = null;
+
+let horarioSeleccionado = null;
+
+const MONTO_MAXIMO = 999999.99;
+
+const MAX_OPERACION = 3;
+
+
+// ==========================================
+// CARGAR POLÍTICA
+// ==========================================
+
+async function cargarPolitica() {
+
+    try {
+
+        const respuesta =
+            await fetch(
+                "/politica-clinica"
+            );
+
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No se pudo cargar la política clínica"
+            );
+        }
+
+
+        politica =
+            await respuesta.json();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        politica =
+            null;
+    }
+}
+
 
 // ==========================================
 // CARGAR PACIENTES
@@ -227,9 +274,12 @@ async function cambiarEspecialidad() {
         );
 
 
-    // ======================================
-    // SIN ESPECIALIDAD
-    // ======================================
+    ocultarDatosPago();
+
+
+    horarioSeleccionado =
+        null;
+
 
     if (
         idEspecialidad === ""
@@ -279,6 +329,13 @@ async function cargarHorariosPorEspecialidad(
             Cargando horarios...
         </option>
     `;
+
+
+    horarioSeleccionado =
+        null;
+
+
+    ocultarDatosPago();
 
 
     try {
@@ -408,17 +465,40 @@ async function cargarHorariosPorEspecialidad(
                 );
 
 
-            select.innerHTML += `
-                <option value="${h.idHorario}">
-                    ${fecha}
-                    |
-                    ${horaInicio}
-                    -
-                    ${horaFin}
-                    |
-                    ${escaparTexto(medico)}
-                </option>
-            `;
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                h.idHorario;
+
+
+            option.textContent =
+                fecha
+                + " | "
+                + horaInicio
+                + " - "
+                + horaFin
+                + " | "
+                + medico;
+
+
+            /*
+             * Guardamos los datos del horario
+             * dentro de la opción.
+             */
+
+            option.dataset.horario =
+                JSON.stringify(
+                    h
+                );
+
+
+            select.appendChild(
+                option
+            );
         });
 
 
@@ -447,7 +527,275 @@ async function cargarHorariosPorEspecialidad(
 
 
 // ==========================================
-// ACTUALIZAR HORARIOS DE ESPECIALIDAD ACTUAL
+// CAMBIAR HORARIO
+// ==========================================
+
+function cambiarHorario() {
+
+    const select =
+        document.getElementById(
+            "horario"
+        );
+
+
+    const option =
+        select.options[
+            select.selectedIndex
+            ];
+
+
+    if (
+        !select.value
+        ||
+        !option
+        ||
+        !option.dataset.horario
+    ) {
+
+        horarioSeleccionado =
+            null;
+
+
+        ocultarDatosPago();
+
+
+        return;
+    }
+
+
+    try {
+
+        horarioSeleccionado =
+            JSON.parse(
+                option.dataset.horario
+            );
+
+
+        mostrarDatosPago();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        horarioSeleccionado =
+            null;
+
+
+        ocultarDatosPago();
+    }
+}
+
+
+// ==========================================
+// MOSTRAR DATOS DEL PAGO
+// ==========================================
+
+function mostrarDatosPago() {
+
+    const idEspecialidad =
+        document.getElementById(
+            "especialidad"
+        ).value;
+
+
+    const especialidad =
+        especialidades.find(
+            e =>
+                Number(
+                    e.idEspecialidad
+                )
+                ===
+                Number(
+                    idEspecialidad
+                )
+        );
+
+
+    if (
+        !especialidad
+    ) {
+
+        ocultarDatosPago();
+
+        return;
+    }
+
+
+    const costo =
+        Number(
+            especialidad.costoConsulta
+            || 0
+        );
+
+
+    const porcentaje =
+        politica
+            ? Number(
+                politica
+                    .porcentajePagoMinimo
+                || 0
+            )
+            : 0;
+
+
+    const minimo =
+        redondearDinero(
+            costo
+            *
+            porcentaje
+            /
+            100
+        );
+
+
+    document.getElementById(
+        "detalleCosto"
+    ).innerText =
+        dinero(
+            costo
+        );
+
+
+    document.getElementById(
+        "detallePagoMinimo"
+    ).innerText =
+        dinero(
+            minimo
+        );
+
+
+    document.getElementById(
+        "detallePorcentajePago"
+    ).innerText =
+        porcentaje;
+
+
+    document.getElementById(
+        "textoPagoMinimo"
+    ).innerText =
+        dinero(
+            minimo
+        );
+
+
+    const montoInput =
+        document.getElementById(
+            "montoPago"
+        );
+
+
+    montoInput.value =
+        dinero(
+            minimo
+        );
+
+
+    montoInput.min =
+        minimo.toFixed(
+            2
+        );
+
+
+    montoInput.max =
+        Math.min(
+            costo,
+            MONTO_MAXIMO
+        ).toFixed(
+            2
+        );
+
+
+    document.getElementById(
+        "detalleReserva"
+    ).style.display =
+        "flex";
+
+
+    document.getElementById(
+        "seccionPagoReserva"
+    ).style.display =
+        "block";
+}
+
+
+// ==========================================
+// OCULTAR DATOS DEL PAGO
+// ==========================================
+
+function ocultarDatosPago() {
+
+    const detalle =
+        document.getElementById(
+            "detalleReserva"
+        );
+
+
+    const pago =
+        document.getElementById(
+            "seccionPagoReserva"
+        );
+
+
+    if (detalle) {
+
+        detalle.style.display =
+            "none";
+    }
+
+
+    if (pago) {
+
+        pago.style.display =
+            "none";
+    }
+
+
+    const monto =
+        document.getElementById(
+            "montoPago"
+        );
+
+
+    const metodo =
+        document.getElementById(
+            "metodoPago"
+        );
+
+
+    const operacion =
+        document.getElementById(
+            "numeroOperacion"
+        );
+
+
+    if (monto) {
+
+        monto.value =
+            "";
+    }
+
+
+    if (metodo) {
+
+        metodo.value =
+            "";
+    }
+
+
+    if (operacion) {
+
+        operacion.value =
+            "";
+    }
+}
+
+
+// ==========================================
+// ACTUALIZAR HORARIOS ACTUALES
 // ==========================================
 
 async function actualizarHorariosActuales() {
@@ -477,6 +825,9 @@ async function actualizarHorariosActuales() {
 
         select.disabled =
             true;
+
+
+        ocultarDatosPago();
 
 
         return;
@@ -531,11 +882,9 @@ async function listarCitas() {
 
             tabla.innerHTML = `
                 <tr>
-
                     <td colspan="8">
                         No hay citas registradas.
                     </td>
-
                 </tr>
             `;
 
@@ -678,7 +1027,7 @@ async function listarCitas() {
 
 
 // ==========================================
-// RESERVAR CITA
+// RESERVAR CITA + PAGO
 // ==========================================
 
 async function reservar() {
@@ -701,18 +1050,32 @@ async function reservar() {
         ).value;
 
 
-    const mensaje =
+    const montoTexto =
         document.getElementById(
-            "mensaje"
-        );
+            "montoPago"
+        ).value.trim();
 
 
-    mensaje.innerText =
-        "";
+    const metodoPago =
+        document.getElementById(
+            "metodoPago"
+        ).value;
+
+
+    const numeroOperacion =
+        document.getElementById(
+            "numeroOperacion"
+        ).value.trim();
+
+
+    mostrarMensaje(
+        "",
+        false
+    );
 
 
     // ======================================
-    // VALIDACIONES
+    // PACIENTE
     // ======================================
 
     if (
@@ -729,6 +1092,10 @@ async function reservar() {
     }
 
 
+    // ======================================
+    // ESPECIALIDAD
+    // ======================================
+
     if (
         idEspecialidad === ""
     ) {
@@ -742,6 +1109,10 @@ async function reservar() {
         return;
     }
 
+
+    // ======================================
+    // HORARIO
+    // ======================================
 
     if (
         idHorario === ""
@@ -757,7 +1128,338 @@ async function reservar() {
     }
 
 
+    if (
+        !horarioSeleccionado
+    ) {
+
+        mostrarMensaje(
+            "El horario seleccionado no es válido.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    // ======================================
+    // ESPECIALIDAD SELECCIONADA
+    // ======================================
+
+    const especialidad =
+        especialidades.find(
+            e =>
+                Number(
+                    e.idEspecialidad
+                )
+                ===
+                Number(
+                    idEspecialidad
+                )
+        );
+
+
+    if (
+        !especialidad
+    ) {
+
+        mostrarMensaje(
+            "No se pudo obtener la especialidad seleccionada.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    const costo =
+        Number(
+            especialidad.costoConsulta
+            || 0
+        );
+
+
+    if (
+        !Number.isFinite(
+            costo
+        )
+        ||
+        costo <= 0
+    ) {
+
+        mostrarMensaje(
+            "La especialidad no tiene un costo de consulta válido.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    // ======================================
+    // MONTO
+    // ======================================
+
+    if (
+        montoTexto === ""
+    ) {
+
+        mostrarMensaje(
+            "Debe ingresar el monto del pago.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    const monto =
+        Number(
+            montoTexto
+        );
+
+
+    if (
+        !Number.isFinite(
+            monto
+        )
+        ||
+        monto <= 0
+    ) {
+
+        mostrarMensaje(
+            "Ingrese un monto de pago válido.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    if (
+        monto > MONTO_MAXIMO
+    ) {
+
+        mostrarMensaje(
+            "El monto no puede ser mayor que S/ "
+            + dinero(
+                MONTO_MAXIMO
+            )
+            + ".",
+            false
+        );
+
+
+        return;
+    }
+
+
+    if (
+        !tieneMaximoDosDecimales(
+            montoTexto
+        )
+    ) {
+
+        mostrarMensaje(
+            "El monto solo puede tener hasta 2 decimales.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    if (
+        monto > costo
+    ) {
+
+        mostrarMensaje(
+            "El monto no puede ser mayor que el costo de la consulta: S/ "
+            + dinero(
+                costo
+            )
+            + ".",
+            false
+        );
+
+
+        return;
+    }
+
+
+    // ======================================
+    // PAGO MÍNIMO
+    // ======================================
+
+    if (
+        !politica
+    ) {
+
+        mostrarMensaje(
+            "No se pudo obtener la política de pago de la clínica.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    const porcentaje =
+        Number(
+            politica
+                .porcentajePagoMinimo
+            || 0
+        );
+
+
+    const minimo =
+        redondearDinero(
+            costo
+            *
+            porcentaje
+            /
+            100
+        );
+
+
+    if (
+        monto < minimo
+    ) {
+
+        mostrarMensaje(
+            "El pago inicial debe ser como mínimo S/ "
+            + dinero(
+                minimo
+            )
+            + " ("
+            + porcentaje
+            + "% del costo de la consulta).",
+            false
+        );
+
+
+        return;
+    }
+
+
+    // ======================================
+    // MÉTODO DE PAGO
+    // ======================================
+
+    if (
+        metodoPago === ""
+    ) {
+
+        mostrarMensaje(
+            "Seleccione un método de pago.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    // ======================================
+    // NÚMERO DE OPERACIÓN
+    // ======================================
+
+    if (
+        numeroOperacion === ""
+    ) {
+
+        mostrarMensaje(
+            "Ingrese el número de operación.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    if (
+        !/^\d+$/.test(
+            numeroOperacion
+        )
+    ) {
+
+        mostrarMensaje(
+            "El número de operación solo puede contener números.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    if (
+        numeroOperacion.length
+        > MAX_OPERACION
+    ) {
+
+        mostrarMensaje(
+            "El número de operación debe tener como máximo 3 dígitos.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    // ======================================
+    // CONFIRMAR
+    // ======================================
+
+    const confirmar =
+        confirm(
+            "¿Confirmar la reserva?\n\n"
+            +
+            "Costo: S/ "
+            +
+            dinero(
+                costo
+            )
+            +
+            "\n"
+            +
+            "Pago inicial: S/ "
+            +
+            dinero(
+                monto
+            )
+        );
+
+
+    if (!confirmar) {
+
+        return;
+    }
+
+
+    const boton =
+        document.getElementById(
+            "btnReservar"
+        );
+
+
+    boton.disabled =
+        true;
+
+
     try {
+
+        // ======================================
+        // ENVIAR RESERVA + PAGO
+        // ======================================
 
         const respuesta =
             await fetch(
@@ -785,7 +1487,18 @@ async function reservar() {
                                 idHorario:
                                     Number(
                                         idHorario
-                                    )
+                                    ),
+
+                                monto:
+                                    redondearDinero(
+                                        monto
+                                    ),
+
+                                metodoPago:
+                                metodoPago,
+
+                                numeroOperacion:
+                                numeroOperacion
                             }
                         )
                 }
@@ -797,26 +1510,73 @@ async function reservar() {
 
 
         // ======================================
-        // RESERVA CORRECTA
+        // CORRECTO
         // ======================================
 
         if (
             respuesta.ok
         ) {
 
-            mostrarMensaje(
-                "Cita registrada correctamente. "
-                + "Queda pendiente el pago requerido.",
-                true
+            let cita =
+                null;
+
+
+            try {
+
+                cita =
+                    JSON.parse(
+                        contenido
+                    );
+
+            } catch (error) {
+
+                /*
+                 * Si el backend no devuelve JSON,
+                 * igualmente consideramos correcta
+                 * la operación.
+                 */
+            }
+
+
+            if (
+                cita
+                &&
+                Number(
+                    cita.saldo
+                ) === 0
+            ) {
+
+                mostrarMensaje(
+                    "Cita registrada y pagada completamente.",
+                    true
+                );
+
+            } else {
+
+                mostrarMensaje(
+                    "Cita registrada correctamente. "
+                    +
+                    "El pago inicial fue registrado.",
+                    true
+                );
+            }
+
+
+            alert(
+                "Reserva registrada correctamente."
+                +
+                "\n\n"
+                +
+                "Pago registrado: S/ "
+                +
+                dinero(
+                    monto
+                )
             );
 
 
-            /*
-             * El horario reservado deja de estar
-             * DISPONIBLE, por lo que recargamos
-             * únicamente los horarios de la
-             * especialidad seleccionada.
-             */
+            limpiarReserva();
+
 
             await actualizarHorariosActuales();
 
@@ -824,12 +1584,65 @@ async function reservar() {
             await listarCitas();
 
 
+            boton.disabled =
+                false;
+
+
             return;
         }
 
 
         // ======================================
-        // ERROR DEL BACKEND
+        // HORARIO OCUPADO
+        // ======================================
+
+        if (
+            respuesta.status === 400
+            &&
+            contenido
+                .toLowerCase()
+                .includes(
+                    "horario ya ocupado"
+                )
+        ) {
+
+            mostrarMensaje(
+                "Otro usuario reservó este horario antes que usted. "
+                +
+                "Seleccione otro horario disponible.",
+                false
+            );
+
+
+            alert(
+                "Horario no disponible\n\n"
+                +
+                "Otro usuario reservó este horario antes que usted.\n\n"
+                +
+                "Seleccione otro horario disponible."
+            );
+
+
+            horarioSeleccionado =
+                null;
+
+
+            ocultarDatosPago();
+
+
+            await actualizarHorariosActuales();
+
+
+            boton.disabled =
+                false;
+
+
+            return;
+        }
+
+
+        // ======================================
+        // OTRO ERROR DEL BACKEND
         // ======================================
 
         mostrarMensaje(
@@ -839,12 +1652,6 @@ async function reservar() {
             false
         );
 
-
-        /*
-         * Puede ocurrir que otro usuario haya
-         * tomado el horario unos segundos antes.
-         * Actualizamos el combo.
-         */
 
         await actualizarHorariosActuales();
 
@@ -860,7 +1667,56 @@ async function reservar() {
             "No se pudo conectar con el servidor.",
             false
         );
+
+
+    } finally {
+
+        boton.disabled =
+            false;
     }
+}
+
+
+// ==========================================
+// LIMPIAR RESERVA
+// ==========================================
+
+function limpiarReserva() {
+
+    document.getElementById(
+        "paciente"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "especialidad"
+    ).value =
+        "";
+
+
+    const horario =
+        document.getElementById(
+            "horario"
+        );
+
+
+    horario.innerHTML = `
+        <option value="">
+            Seleccione una especialidad primero
+        </option>
+    `;
+
+
+    horario.disabled =
+        true;
+
+
+    horarioSeleccionado =
+        null;
+
+
+    ocultarDatosPago();
 }
 
 
@@ -901,10 +1757,6 @@ async function eliminarCita(
             await respuesta.text();
 
 
-        // ======================================
-        // ELIMINACIÓN CORRECTA
-        // ======================================
-
         if (
             respuesta.ok
         ) {
@@ -917,11 +1769,6 @@ async function eliminarCita(
             );
 
 
-            /*
-             * Al eliminar una cita sin pagos,
-             * el horario vuelve a DISPONIBLE.
-             */
-
             await actualizarHorariosActuales();
 
 
@@ -931,10 +1778,6 @@ async function eliminarCita(
             return;
         }
 
-
-        // ======================================
-        // ERROR DEL BACKEND
-        // ======================================
 
         mostrarMensaje(
             contenido
@@ -1123,6 +1966,106 @@ function formatearHora(
 
 
 // ==========================================
+// FORMATEAR DINERO
+// ==========================================
+
+function dinero(
+    valor
+) {
+
+    const numero =
+        Number(
+            valor
+        );
+
+
+    if (
+        !Number.isFinite(
+            numero
+        )
+    ) {
+
+        return "0.00";
+    }
+
+
+    return numero.toFixed(
+        2
+    );
+}
+
+
+// ==========================================
+// REDONDEAR DINERO
+// ==========================================
+
+function redondearDinero(
+    valor
+) {
+
+    return Math.round(
+            (
+                Number(valor)
+                +
+                Number.EPSILON
+            )
+            *
+            100
+        )
+        /
+        100;
+}
+
+
+// ==========================================
+// VALIDAR DECIMALES
+// ==========================================
+
+function tieneMaximoDosDecimales(
+    valor
+) {
+
+    return /^\d+(\.\d{1,2})?$/.test(
+        String(
+            valor
+        )
+    );
+}
+
+
+// ==========================================
+// NÚMERO DE OPERACIÓN
+// SOLO NÚMEROS Y MÁXIMO 3
+// ==========================================
+
+function limitarNumeroOperacion() {
+
+    const input =
+        document.getElementById(
+            "numeroOperacion"
+        );
+
+
+    if (!input) {
+
+        return;
+    }
+
+
+    input.value =
+        input.value
+            .replace(
+                /\D/g,
+                ""
+            )
+            .slice(
+                0,
+                MAX_OPERACION
+            );
+}
+
+
+// ==========================================
 // ESCAPAR TEXTO
 // ==========================================
 
@@ -1165,7 +2108,7 @@ function escaparTexto(
 
 
 // ==========================================
-// EVENTO DE ESPECIALIDAD
+// EVENTOS
 // ==========================================
 
 document
@@ -1178,11 +2121,33 @@ document
     );
 
 
+document
+    .getElementById(
+        "horario"
+    )
+    .addEventListener(
+        "change",
+        cambiarHorario
+    );
+
+
+document
+    .getElementById(
+        "numeroOperacion"
+    )
+    .addEventListener(
+        "input",
+        limitarNumeroOperacion
+    );
+
+
 // ==========================================
 // INICIAR
 // ==========================================
 
 async function iniciar() {
+
+    await cargarPolitica();
 
     await cargarPacientes();
 
