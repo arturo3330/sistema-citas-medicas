@@ -1,9 +1,11 @@
 package com.citasmedicas.sistema_citas_medicas.controller;
 
 import com.citasmedicas.sistema_citas_medicas.service.HorarioAutomaticoService;
+import com.citasmedicas.sistema_citas_medicas.service.RealtimeService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/horarios-automaticos")
@@ -13,12 +15,20 @@ public class HorarioAutomaticoController {
     private final HorarioAutomaticoService
             horarioAutomaticoService;
 
+    private final RealtimeService
+            realtimeService;
+
 
     public HorarioAutomaticoController(
-            HorarioAutomaticoService horarioAutomaticoService) {
+            HorarioAutomaticoService horarioAutomaticoService,
+            RealtimeService realtimeService
+    ) {
 
         this.horarioAutomaticoService =
                 horarioAutomaticoService;
+
+        this.realtimeService =
+                realtimeService;
     }
 
 
@@ -28,7 +38,8 @@ public class HorarioAutomaticoController {
 
     @PostMapping("/generar/{idMedico}")
     public ResponseEntity<?> generar(
-            @PathVariable Long idMedico) {
+            @PathVariable Long idMedico
+    ) {
 
         try {
 
@@ -39,19 +50,44 @@ public class HorarioAutomaticoController {
                             );
 
 
-            if (cantidad == 0) {
+            // ======================================
+            // NOTIFICAR EN TIEMPO REAL
+            // ======================================
 
-                return ResponseEntity.ok(
-                        "No se generaron nuevos horarios. "
-                                + "Los horarios del médico ya existen "
-                                + "o no hay bloques disponibles."
+            if (cantidad > 0) {
+
+                realtimeService.notificar(
+                        "HORARIOS",
+                        "GENERADOS",
+                        idMedico
                 );
             }
 
 
+            // ======================================
+            // SIN NUEVOS HORARIOS
+            // ======================================
+
+            if (cantidad == 0) {
+
+                return ResponseEntity.ok(
+                        "No se generaron nuevos horarios. "
+                                +
+                                "Los horarios del médico ya existen "
+                                +
+                                "o no hay bloques disponibles."
+                );
+            }
+
+
+            // ======================================
+            // RESPUESTA CORRECTA
+            // ======================================
+
             return ResponseEntity.ok(
                     "Horarios generados correctamente: "
-                            + cantidad
+                            +
+                            cantidad
             );
 
 
