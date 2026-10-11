@@ -989,17 +989,45 @@ async function listarCitas() {
 
                     <td>
 
-                        <button
-                            type="button"
-                            onclick="eliminarCita(
-                                ${c.idCita}
-                            )">
+    ${
+                String(
+                    c.estado || ""
+                ).toUpperCase() === "CANCELADA"
 
-                            Eliminar
+                    ? `
+                <button
+                    type="button"
+                    disabled
+                    style="
+                        background-color: #6c757d;
+                        color: white;
+                        cursor: not-allowed;
+                        opacity: 0.7;
+                    ">
 
-                        </button>
+                    Cancelada
 
-                    </td>
+                </button>
+              `
+
+                    : `
+                <button
+                    type="button"
+                    onclick="cancelarCita(
+                        ${c.idCita}
+                    )"
+                    style="
+                        background-color: #dc3545;
+                        color: white;
+                    ">
+
+                    Cancelar cita
+
+                </button>
+              `
+            }
+
+</td>
 
                 </tr>
             `;
@@ -1719,18 +1747,48 @@ function limpiarReserva() {
     ocultarDatosPago();
 }
 
-
 // ==========================================
-// ELIMINAR CITA
+// CANCELAR CITA
 // ==========================================
 
-async function eliminarCita(
+async function cancelarCita(
     idCita
 ) {
 
+    // ======================================
+    // VALIDAR ID
+    // ======================================
+
+    if (
+        idCita == null
+        ||
+        Number(idCita) <= 0
+    ) {
+
+        mostrarMensaje(
+            "No se encontró una cita válida.",
+            false
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // CONFIRMAR
+    // ======================================
+
     const confirmar =
         confirm(
-            "¿Desea eliminar esta cita?"
+            "¿Desea cancelar esta cita?"
+            +
+            "\n\n"
+            +
+            "El horario volverá a estar disponible."
+            +
+            "\n"
+            +
+            "Los pagos registrados se conservarán."
         );
 
 
@@ -1742,11 +1800,14 @@ async function eliminarCita(
 
     try {
 
+        // ======================================
+        // ENVIAR CANCELACIÓN
+        // ======================================
+
         const respuesta =
             await fetch(
                 "/citas/" + idCita,
                 {
-
                     method:
                         "DELETE"
                 }
@@ -1757,6 +1818,10 @@ async function eliminarCita(
             await respuesta.text();
 
 
+        // ======================================
+        // CORRECTO
+        // ======================================
+
         if (
             respuesta.ok
         ) {
@@ -1764,13 +1829,28 @@ async function eliminarCita(
             mostrarMensaje(
                 contenido
                 ||
-                "Cita eliminada correctamente.",
+                "Cita cancelada correctamente.",
                 true
             );
 
 
+            alert(
+                contenido
+                ||
+                "Cita cancelada correctamente."
+            );
+
+
+            // ==================================
+            // ACTUALIZAR HORARIOS
+            // ==================================
+
             await actualizarHorariosActuales();
 
+
+            // ==================================
+            // ACTUALIZAR TABLA
+            // ==================================
 
             await listarCitas();
 
@@ -1779,11 +1859,22 @@ async function eliminarCita(
         }
 
 
+        // ======================================
+        // ERROR DEL BACKEND
+        // ======================================
+
         mostrarMensaje(
             contenido
             ||
-            "No se pudo eliminar la cita.",
+            "No se pudo cancelar la cita.",
             false
+        );
+
+
+        alert(
+            contenido
+            ||
+            "No se pudo cancelar la cita."
         );
 
 
@@ -1798,9 +1889,13 @@ async function eliminarCita(
             "No se pudo conectar con el servidor.",
             false
         );
+
+
+        alert(
+            "No se pudo conectar con el servidor."
+        );
     }
 }
-
 
 // ==========================================
 // MOSTRAR MENSAJE
@@ -1833,7 +1928,6 @@ function mostrarMensaje(
             : "#b3261e";
 }
 
-
 // ==========================================
 // FORMATEAR ESTADO DE CITA
 // ==========================================
@@ -1863,6 +1957,11 @@ function formatearEstadoCita(
             return "Confirmada";
 
 
+        case "CANCELADA":
+
+            return "Cancelada";
+
+
         case "ANULADA":
 
             return "Anulada";
@@ -1878,7 +1977,6 @@ function formatearEstadoCita(
             return estado || "-";
     }
 }
-
 
 // ==========================================
 // FORMATEAR FECHA

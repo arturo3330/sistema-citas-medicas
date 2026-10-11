@@ -612,7 +612,7 @@ ${esPaciente() ? `
 
 ` : esSecretaria() ? `
     <a
-        class="navbar-accion-principal"
+        class="navbar-accion-principal" 
         href="citas.html">
 
         Nueva cita

@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class CitaService {
 
@@ -181,6 +182,7 @@ public class CitaService {
          * exactamente el mismo horario,
          * solo uno podrá continuar.
          */
+
         Horario horario =
                 horarioRepository
                         .buscarConBloqueo(
@@ -385,6 +387,7 @@ public class CitaService {
          *
          * dependiendo del monto pagado.
          */
+
         cita.setEstado(
                 "PENDIENTE_PAGO"
         );
@@ -437,6 +440,7 @@ public class CitaService {
          * Forzamos que la cita tenga su ID
          * antes de crear el PagoRequest.
          */
+
         citaRepository.flush();
 
 
@@ -488,6 +492,7 @@ public class CitaService {
          * Como estamos dentro de esta misma
          * transacción, Spring hará ROLLBACK.
          */
+
         pagoService.registrarPago(
                 pagoRequest
         );
@@ -529,13 +534,29 @@ public class CitaService {
 
 
     // ==========================================
-    // ELIMINAR CITA
+    // CANCELAR CITA
     // ==========================================
 
     @Transactional
     public void eliminar(
             Long id
     ) {
+
+        // ======================================
+        // VALIDAR ID
+        // ======================================
+
+        if (id == null) {
+
+            throw new RuntimeException(
+                    "El código de la cita es obligatorio"
+            );
+        }
+
+
+        // ======================================
+        // BUSCAR CITA
+        // ======================================
 
         Cita cita =
                 citaRepository
@@ -550,32 +571,35 @@ public class CitaService {
 
 
         // ======================================
-        // VALIDAR SI YA TIENE RECIBO
+        // VALIDAR SI YA ESTÁ CANCELADA
         // ======================================
 
-        boolean tieneRecibo =
-                reciboRepository
-                        .findByCitaIdCita(
-                                id
-                        )
-                        .isPresent();
-
-
-        if (tieneRecibo) {
+        if (
+                cita.getEstado() != null
+                        &&
+                        cita.getEstado()
+                                .equalsIgnoreCase(
+                                        "CANCELADA"
+                                )
+        ) {
 
             throw new RuntimeException(
-                    "No se puede eliminar la cita porque ya tiene pagos registrados"
+                    "La cita ya se encuentra cancelada"
             );
         }
 
 
         // ======================================
-        // LIBERAR HORARIO
+        // OBTENER HORARIO
         // ======================================
 
         Horario horario =
                 cita.getHorario();
 
+
+        // ======================================
+        // LIBERAR HORARIO
+        // ======================================
 
         if (horario != null) {
 
@@ -591,22 +615,40 @@ public class CitaService {
 
 
         // ======================================
-        // NOMBRE DEL PACIENTE
+        // OBTENER NOMBRE DEL PACIENTE
         // ======================================
 
         String nombrePaciente =
                 cita.getPaciente() != null
-                        ? cita
-                        .getPaciente()
-                        .getNombre()
-                        : "paciente";
+                        ?
+                        cita.getPaciente()
+                                .getNombre()
+                        :
+                        "paciente";
 
 
         // ======================================
-        // ELIMINAR
+        // CANCELAR CITA
         // ======================================
 
-        citaRepository.delete(
+        /*
+         * NO eliminamos físicamente la cita.
+         *
+         * Esto permite conservar:
+         *
+         * - historial de pagos
+         * - recibos
+         * - información del paciente
+         * - información del médico
+         * - historial administrativo
+         */
+
+        cita.setEstado(
+                "CANCELADA"
+        );
+
+
+        citaRepository.save(
                 cita
         );
 
@@ -617,7 +659,7 @@ public class CitaService {
 
         actividadService.registrar(
                 "CITA",
-                "Cita eliminada de "
+                "Cita cancelada de "
                         + nombrePaciente,
                 null,
                 null

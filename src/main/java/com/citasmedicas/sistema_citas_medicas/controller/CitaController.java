@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/citas")
 @CrossOrigin(origins = "*")
@@ -199,10 +200,6 @@ public class CitaController {
 
         } catch (RuntimeException e) {
 
-            // ======================================
-            // ERROR DE VALIDACIÓN / CONCURRENCIA
-            // ======================================
-
             return ResponseEntity
                     .badRequest()
                     .body(
@@ -213,7 +210,7 @@ public class CitaController {
 
 
     // ==========================================
-    // ELIMINAR / CANCELAR CITA
+    // CANCELAR CITA
     // ==========================================
 
     @DeleteMapping("/{id}")
@@ -229,7 +226,7 @@ public class CitaController {
 
 
             return ResponseEntity.ok(
-                    "Cita eliminada correctamente"
+                    "Cita cancelada correctamente"
             );
 
 
