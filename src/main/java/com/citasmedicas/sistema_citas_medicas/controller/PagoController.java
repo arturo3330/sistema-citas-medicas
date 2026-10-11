@@ -3,6 +3,7 @@ package com.citasmedicas.sistema_citas_medicas.controller;
 import com.citasmedicas.sistema_citas_medicas.dto.PagoRequest;
 import com.citasmedicas.sistema_citas_medicas.entity.Recibo;
 import com.citasmedicas.sistema_citas_medicas.service.PagoService;
+import com.citasmedicas.sistema_citas_medicas.service.RealtimeService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,18 @@ public class PagoController {
 
     private final PagoService pagoService;
 
+    private final RealtimeService realtimeService;
+
 
     public PagoController(
-            PagoService pagoService) {
+            PagoService pagoService,
+            RealtimeService realtimeService) {
 
         this.pagoService =
                 pagoService;
+
+        this.realtimeService =
+                realtimeService;
     }
 
 
@@ -79,6 +86,19 @@ public class PagoController {
                             .registrarPago(
                                     request
                             );
+
+
+            realtimeService.notificar(
+                    "PAGOS",
+                    "REGISTRADO",
+                    recibo.getIdRecibo()
+            );
+
+            realtimeService.notificar(
+                    "CITAS",
+                    "PAGO_ACTUALIZADO",
+                    request.getIdCita()
+            );
 
 
             return ResponseEntity.ok(

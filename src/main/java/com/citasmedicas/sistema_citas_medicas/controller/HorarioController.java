@@ -2,6 +2,7 @@ package com.citasmedicas.sistema_citas_medicas.controller;
 
 import com.citasmedicas.sistema_citas_medicas.entity.Horario;
 import com.citasmedicas.sistema_citas_medicas.service.HorarioService;
+import com.citasmedicas.sistema_citas_medicas.service.RealtimeService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,18 @@ public class HorarioController {
 
     private final HorarioService horarioService;
 
+    private final RealtimeService realtimeService;
+
 
     public HorarioController(
-            HorarioService horarioService) {
+            HorarioService horarioService,
+            RealtimeService realtimeService) {
 
         this.horarioService =
                 horarioService;
+
+        this.realtimeService =
+                realtimeService;
     }
 
 
@@ -131,6 +138,12 @@ public class HorarioController {
                             );
 
 
+            realtimeService.notificar(
+                    "HORARIOS",
+                    "CREADO",
+                    nuevo.getIdHorario()
+            );
+
             return ResponseEntity.ok(
                     nuevo
             );
@@ -166,6 +179,12 @@ public class HorarioController {
                             );
 
 
+            realtimeService.notificar(
+                    "HORARIOS",
+                    "ACTUALIZADO",
+                    actualizado.getIdHorario()
+            );
+
             return ResponseEntity.ok(
                     actualizado
             );
@@ -197,6 +216,12 @@ public class HorarioController {
                             id
                     );
 
+
+            realtimeService.notificar(
+                    "HORARIOS",
+                    "ELIMINADO",
+                    id
+            );
 
             return ResponseEntity.ok(
                     "Horario eliminado correctamente"

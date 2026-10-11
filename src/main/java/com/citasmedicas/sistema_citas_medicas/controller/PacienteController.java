@@ -2,6 +2,7 @@ package com.citasmedicas.sistema_citas_medicas.controller;
 
 import com.citasmedicas.sistema_citas_medicas.entity.Paciente;
 import com.citasmedicas.sistema_citas_medicas.service.PacienteService;
+import com.citasmedicas.sistema_citas_medicas.service.RealtimeService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,19 @@ public class PacienteController {
 
     private final PacienteService pacienteService;
 
+    private final RealtimeService realtimeService;
+
 
     public PacienteController(
-            PacienteService pacienteService
+            PacienteService pacienteService,
+            RealtimeService realtimeService
     ) {
 
         this.pacienteService =
                 pacienteService;
+
+        this.realtimeService =
+                realtimeService;
     }
 
 
@@ -92,6 +99,12 @@ public class PacienteController {
                             paciente
                     );
 
+            realtimeService.notificar(
+                    "PACIENTES",
+                    "CREADO",
+                    guardado.getIdPaciente()
+            );
+
             return ResponseEntity
                     .ok(
                             guardado
@@ -126,6 +139,12 @@ public class PacienteController {
                             paciente
                     );
 
+            realtimeService.notificar(
+                    "PACIENTES",
+                    "ACTUALIZADO",
+                    actualizado.getIdPaciente()
+            );
+
             return ResponseEntity
                     .ok(
                             actualizado
@@ -154,6 +173,12 @@ public class PacienteController {
         try {
 
             pacienteService.eliminar(
+                    id
+            );
+
+            realtimeService.notificar(
+                    "PACIENTES",
+                    "DESACTIVADO",
                     id
             );
 

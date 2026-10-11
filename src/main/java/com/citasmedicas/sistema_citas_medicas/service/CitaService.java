@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class CitaService {
 
@@ -182,7 +181,6 @@ public class CitaService {
          * exactamente el mismo horario,
          * solo uno podrá continuar.
          */
-
         Horario horario =
                 horarioRepository
                         .buscarConBloqueo(
@@ -387,7 +385,6 @@ public class CitaService {
          *
          * dependiendo del monto pagado.
          */
-
         cita.setEstado(
                 "PENDIENTE_PAGO"
         );
@@ -440,7 +437,6 @@ public class CitaService {
          * Forzamos que la cita tenga su ID
          * antes de crear el PagoRequest.
          */
-
         citaRepository.flush();
 
 
@@ -492,7 +488,6 @@ public class CitaService {
          * Como estamos dentro de esta misma
          * transacción, Spring hará ROLLBACK.
          */
-
         pagoService.registrarPago(
                 pagoRequest
         );
@@ -542,10 +537,6 @@ public class CitaService {
             Long id
     ) {
 
-        // ======================================
-        // VALIDAR ID
-        // ======================================
-
         if (id == null) {
 
             throw new RuntimeException(
@@ -553,10 +544,6 @@ public class CitaService {
             );
         }
 
-
-        // ======================================
-        // BUSCAR CITA
-        // ======================================
 
         Cita cita =
                 citaRepository
@@ -570,17 +557,13 @@ public class CitaService {
                         );
 
 
-        // ======================================
-        // VALIDAR SI YA ESTÁ CANCELADA
-        // ======================================
-
         if (
                 cita.getEstado() != null
                         &&
-                        cita.getEstado()
-                                .equalsIgnoreCase(
-                                        "CANCELADA"
-                                )
+                cita.getEstado()
+                        .equalsIgnoreCase(
+                                "CANCELADA"
+                        )
         ) {
 
             throw new RuntimeException(
@@ -589,17 +572,9 @@ public class CitaService {
         }
 
 
-        // ======================================
-        // OBTENER HORARIO
-        // ======================================
-
         Horario horario =
                 cita.getHorario();
 
-
-        // ======================================
-        // LIBERAR HORARIO
-        // ======================================
 
         if (horario != null) {
 
@@ -607,55 +582,31 @@ public class CitaService {
                     "DISPONIBLE"
             );
 
-
             horarioRepository.save(
                     horario
             );
         }
 
 
-        // ======================================
-        // OBTENER NOMBRE DEL PACIENTE
-        // ======================================
-
         String nombrePaciente =
                 cita.getPaciente() != null
-                        ?
-                        cita.getPaciente()
-                                .getNombre()
-                        :
-                        "paciente";
+                        ? cita.getPaciente().getNombre()
+                        : "paciente";
 
-
-        // ======================================
-        // CANCELAR CITA
-        // ======================================
 
         /*
-         * NO eliminamos físicamente la cita.
-         *
-         * Esto permite conservar:
-         *
-         * - historial de pagos
-         * - recibos
-         * - información del paciente
-         * - información del médico
-         * - historial administrativo
+         * Cancelación lógica.
+         * No se borra físicamente la cita porque
+         * puede tener pagos y recibos asociados.
          */
-
         cita.setEstado(
                 "CANCELADA"
         );
-
 
         citaRepository.save(
                 cita
         );
 
-
-        // ======================================
-        // REGISTRAR ACTIVIDAD
-        // ======================================
 
         actividadService.registrar(
                 "CITA",

@@ -2,6 +2,7 @@ package com.citasmedicas.sistema_citas_medicas.controller;
 
 import com.citasmedicas.sistema_citas_medicas.entity.Especialidad;
 import com.citasmedicas.sistema_citas_medicas.service.EspecialidadService;
+import com.citasmedicas.sistema_citas_medicas.service.RealtimeService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,19 @@ public class EspecialidadController {
 
     private final EspecialidadService especialidadService;
 
+    private final RealtimeService realtimeService;
+
 
     public EspecialidadController(
-            EspecialidadService especialidadService
+            EspecialidadService especialidadService,
+            RealtimeService realtimeService
     ) {
 
         this.especialidadService =
                 especialidadService;
+
+        this.realtimeService =
+                realtimeService;
     }
 
 
@@ -88,6 +95,12 @@ public class EspecialidadController {
                     );
 
 
+            realtimeService.notificar(
+                    "ESPECIALIDADES",
+                    "CREADA",
+                    guardada.getIdEspecialidad()
+            );
+
             return ResponseEntity.ok(
                     guardada
             );
@@ -123,6 +136,12 @@ public class EspecialidadController {
                     );
 
 
+            realtimeService.notificar(
+                    "ESPECIALIDADES",
+                    "ACTUALIZADA",
+                    actualizada.getIdEspecialidad()
+            );
+
             return ResponseEntity.ok(
                     actualizada
             );
@@ -155,6 +174,18 @@ public class EspecialidadController {
                     id
             );
 
+
+            realtimeService.notificar(
+                    "ESPECIALIDADES",
+                    "DESACTIVADA",
+                    id
+            );
+
+            realtimeService.notificar(
+                    "MEDICOS",
+                    "ESPECIALIDAD_CAMBIO",
+                    id
+            );
 
             return ResponseEntity.ok(
                     "Especialidad eliminada correctamente"

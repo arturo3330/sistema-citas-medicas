@@ -989,45 +989,25 @@ async function listarCitas() {
 
                     <td>
 
-    ${
-                String(
-                    c.estado || ""
-                ).toUpperCase() === "CANCELADA"
+                        ${
+                            String(c.estado || "").toUpperCase() === "CANCELADA"
+                                ? `
+                                    <button
+                                        type="button"
+                                        disabled>
+                                        Cancelada
+                                    </button>
+                                  `
+                                : `
+                                    <button
+                                        type="button"
+                                        onclick="cancelarCita(${c.idCita})">
+                                        Cancelar cita
+                                    </button>
+                                  `
+                        }
 
-                    ? `
-                <button
-                    type="button"
-                    disabled
-                    style="
-                        background-color: #6c757d;
-                        color: white;
-                        cursor: not-allowed;
-                        opacity: 0.7;
-                    ">
-
-                    Cancelada
-
-                </button>
-              `
-
-                    : `
-                <button
-                    type="button"
-                    onclick="cancelarCita(
-                        ${c.idCita}
-                    )"
-                    style="
-                        background-color: #dc3545;
-                        color: white;
-                    ">
-
-                    Cancelar cita
-
-                </button>
-              `
-            }
-
-</td>
+                    </td>
 
                 </tr>
             `;
@@ -1747,6 +1727,7 @@ function limpiarReserva() {
     ocultarDatosPago();
 }
 
+
 // ==========================================
 // CANCELAR CITA
 // ==========================================
@@ -1755,147 +1736,66 @@ async function cancelarCita(
     idCita
 ) {
 
-    // ======================================
-    // VALIDAR ID
-    // ======================================
-
-    if (
-        idCita == null
-        ||
-        Number(idCita) <= 0
-    ) {
-
+    if (!idCita) {
         mostrarMensaje(
             "No se encontró una cita válida.",
             false
         );
-
         return;
     }
-
-
-    // ======================================
-    // CONFIRMAR
-    // ======================================
 
     const confirmar =
         confirm(
-            "¿Desea cancelar esta cita?"
-            +
-            "\n\n"
-            +
-            "El horario volverá a estar disponible."
-            +
-            "\n"
-            +
-            "Los pagos registrados se conservarán."
+            "¿Desea cancelar esta cita?\n\n"
+            + "El horario volverá a estar disponible.\n"
+            + "Los pagos registrados se conservarán."
         );
 
-
     if (!confirmar) {
-
         return;
     }
 
-
     try {
-
-        // ======================================
-        // ENVIAR CANCELACIÓN
-        // ======================================
 
         const respuesta =
             await fetch(
                 "/citas/" + idCita,
                 {
-                    method:
-                        "DELETE"
+                    method: "DELETE"
                 }
             );
-
 
         const contenido =
             await respuesta.text();
 
-
-        // ======================================
-        // CORRECTO
-        // ======================================
-
-        if (
-            respuesta.ok
-        ) {
+        if (respuesta.ok) {
 
             mostrarMensaje(
-                contenido
-                ||
-                "Cita cancelada correctamente.",
+                contenido || "Cita cancelada correctamente.",
                 true
             );
 
-
-            alert(
-                contenido
-                ||
-                "Cita cancelada correctamente."
-            );
-
-
-            // ==================================
-            // ACTUALIZAR HORARIOS
-            // ==================================
-
             await actualizarHorariosActuales();
-
-
-            // ==================================
-            // ACTUALIZAR TABLA
-            // ==================================
-
             await listarCitas();
-
-
             return;
         }
 
-
-        // ======================================
-        // ERROR DEL BACKEND
-        // ======================================
-
         mostrarMensaje(
-            contenido
-            ||
-            "No se pudo cancelar la cita.",
+            contenido || "No se pudo cancelar la cita.",
             false
         );
 
-
-        alert(
-            contenido
-            ||
-            "No se pudo cancelar la cita."
-        );
-
-
     } catch (error) {
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         mostrarMensaje(
             "No se pudo conectar con el servidor.",
             false
         );
-
-
-        alert(
-            "No se pudo conectar con el servidor."
-        );
     }
 }
+
 
 // ==========================================
 // MOSTRAR MENSAJE
@@ -1927,6 +1827,7 @@ function mostrarMensaje(
             ? "#1b7f3b"
             : "#b3261e";
 }
+
 
 // ==========================================
 // FORMATEAR ESTADO DE CITA
@@ -1977,6 +1878,7 @@ function formatearEstadoCita(
             return estado || "-";
     }
 }
+
 
 // ==========================================
 // FORMATEAR FECHA
@@ -2254,5 +2156,47 @@ async function iniciar() {
     await listarCitas();
 }
 
+
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir(
+    "CITAS",
+    async () => {
+        await listarCitas();
+        await actualizarHorariosActuales();
+    }
+);
+
+tiempoRealSuscribir(
+    "HORARIOS",
+    async () => {
+        await actualizarHorariosActuales();
+    }
+);
+
+tiempoRealSuscribir(
+    "PAGOS",
+    async () => {
+        await listarCitas();
+    }
+);
+
+tiempoRealSuscribir(
+    "PACIENTES",
+    async () => {
+        await cargarPacientes();
+    }
+);
+
+tiempoRealSuscribir(
+    "ESPECIALIDADES",
+    async () => {
+        await cargarEspecialidades();
+        await actualizarHorariosActuales();
+    }
+);
 
 iniciar();

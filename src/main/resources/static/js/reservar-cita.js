@@ -2738,4 +2738,30 @@ async function iniciar() {
 // EJECUTAR
 // ==========================================
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("HORARIOS", async () => {
+    const especialidad = document.getElementById("especialidad").value;
+    const medico = document.getElementById("medico").value;
+    const fecha = document.getElementById("fecha").value;
+
+    if (especialidad && medico && fecha) {
+        await cambiarFecha();
+    }
+});
+
+tiempoRealSuscribir("MEDICOS", async () => {
+    const especialidad = document.getElementById("especialidad").value;
+    if (especialidad) {
+        await cambiarEspecialidad();
+    }
+});
+
+tiempoRealSuscribir("ESPECIALIDADES", async () => {
+    await cargarEspecialidades();
+});
+
 iniciar();

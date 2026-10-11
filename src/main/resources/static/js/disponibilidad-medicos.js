@@ -1020,4 +1020,20 @@ async function iniciar() {
 }
 
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("HORARIOS", async () => {
+    const idMedico = document.getElementById("medico").value;
+    if (idMedico) {
+        await cargarHorariosMedico(idMedico);
+    }
+});
+
+tiempoRealSuscribir("MEDICOS", async () => {
+    await cargarMedicos();
+});
+
 iniciar();

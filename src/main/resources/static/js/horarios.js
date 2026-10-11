@@ -1637,4 +1637,18 @@ async function iniciar() {
 // EJECUTAR
 // ==========================================
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("HORARIOS", async () => {
+    await listar();
+});
+
+tiempoRealSuscribir("MEDICOS", async () => {
+    await cargarMedicos();
+    await listar();
+});
+
 iniciar();

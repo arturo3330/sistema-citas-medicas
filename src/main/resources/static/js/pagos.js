@@ -1467,4 +1467,19 @@ async function iniciar() {
 }
 
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("PAGOS", async () => {
+    await cargarCitas();
+    await listarPagos();
+});
+
+tiempoRealSuscribir("CITAS", async () => {
+    await cargarCitas();
+    await listarPagos();
+});
+
 iniciar();

@@ -129,4 +129,17 @@ async function listarMedicos() {
 }
 
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("MEDICOS", async () => {
+    await listarMedicos();
+});
+
+tiempoRealSuscribir("ESPECIALIDADES", async () => {
+    await listarMedicos();
+});
+
 listarMedicos();

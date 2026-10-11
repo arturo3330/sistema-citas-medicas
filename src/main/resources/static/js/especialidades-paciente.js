@@ -137,4 +137,13 @@ async function listarEspecialidades() {
 }
 
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("ESPECIALIDADES", async () => {
+    await listarEspecialidades();
+});
+
 listarEspecialidades();

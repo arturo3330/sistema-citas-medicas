@@ -924,4 +924,13 @@ async function iniciar() {
 }
 
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("ESPECIALIDADES", async () => {
+    await listar();
+});
+
 iniciar();

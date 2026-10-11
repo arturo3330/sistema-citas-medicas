@@ -761,4 +761,18 @@ async function iniciar() {
 }
 
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("MEDICOS", async () => {
+    await listar();
+});
+
+tiempoRealSuscribir("ESPECIALIDADES", async () => {
+    await cargarEspecialidades();
+    await listar();
+});
+
 iniciar();

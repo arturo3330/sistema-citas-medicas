@@ -539,4 +539,17 @@ async function cargarMisPagos() {
 // INICIO
 // ==========================================
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("PAGOS", async () => {
+    await cargarMisPagos();
+});
+
+tiempoRealSuscribir("CITAS", async () => {
+    await cargarMisPagos();
+});
+
 cargarMisPagos();

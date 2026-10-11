@@ -389,4 +389,17 @@ function formatearHora(
 // INICIO
 // ==========================================
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("CITAS", async () => {
+    await listarMisCitas();
+});
+
+tiempoRealSuscribir("PAGOS", async () => {
+    await listarMisCitas();
+});
+
 listarMisCitas();

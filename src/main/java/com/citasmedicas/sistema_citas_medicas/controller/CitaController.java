@@ -3,12 +3,12 @@ package com.citasmedicas.sistema_citas_medicas.controller;
 import com.citasmedicas.sistema_citas_medicas.dto.CitaRequest;
 import com.citasmedicas.sistema_citas_medicas.entity.Cita;
 import com.citasmedicas.sistema_citas_medicas.service.CitaService;
+import com.citasmedicas.sistema_citas_medicas.service.RealtimeService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/citas")
@@ -17,13 +17,19 @@ public class CitaController {
 
     private final CitaService citaService;
 
+    private final RealtimeService realtimeService;
+
 
     public CitaController(
-            CitaService citaService
+            CitaService citaService,
+            RealtimeService realtimeService
     ) {
 
         this.citaService =
                 citaService;
+
+        this.realtimeService =
+                realtimeService;
     }
 
 
@@ -190,6 +196,29 @@ public class CitaController {
 
 
             // ======================================
+            // NOTIFICAR A LOS DEMÁS NAVEGADORES
+            // ======================================
+
+            realtimeService.notificar(
+                    "CITAS",
+                    "RESERVADA",
+                    cita.getIdCita()
+            );
+
+            realtimeService.notificar(
+                    "HORARIOS",
+                    "RESERVADO",
+                    request.getIdHorario()
+            );
+
+            realtimeService.notificar(
+                    "PAGOS",
+                    "PAGO_INICIAL",
+                    cita.getIdCita()
+            );
+
+
+            // ======================================
             // RESPUESTA CORRECTA
             // ======================================
 
@@ -199,6 +228,10 @@ public class CitaController {
 
 
         } catch (RuntimeException e) {
+
+            // ======================================
+            // ERROR DE VALIDACIÓN / CONCURRENCIA
+            // ======================================
 
             return ResponseEntity
                     .badRequest()
@@ -210,7 +243,7 @@ public class CitaController {
 
 
     // ==========================================
-    // CANCELAR CITA
+    // ELIMINAR / CANCELAR CITA
     // ==========================================
 
     @DeleteMapping("/{id}")
@@ -221,6 +254,19 @@ public class CitaController {
         try {
 
             citaService.eliminar(
+                    id
+            );
+
+
+            realtimeService.notificar(
+                    "CITAS",
+                    "CANCELADA",
+                    id
+            );
+
+            realtimeService.notificar(
+                    "HORARIOS",
+                    "LIBERADO",
                     id
             );
 

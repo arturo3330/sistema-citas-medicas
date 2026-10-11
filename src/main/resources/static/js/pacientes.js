@@ -560,4 +560,13 @@ function limpiar() {
 // INICIO
 // ==========================================
 
+
+// ==========================================
+// SINCRONIZACIÓN EN TIEMPO REAL
+// ==========================================
+
+tiempoRealSuscribir("PACIENTES", async () => {
+    await listar();
+});
+
 listar();
